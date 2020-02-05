@@ -1,0 +1,2 @@
+{'log': 'message', 'timestamp': '10/28/19 01:31:08', 'bot': False, 'author': {'id': 125449182663278592, 'name': 'Vyryn'}, 'guild': {'id': 'private', 'name': 'Vyryn'}, 'channel': {'id': 635293199484846090, 'name': 'Vyryn'}, 'content': 'test'}
+{'log': 'message', 'timestamp': '10/28/19 01:31:56', 'bot': False, 'author': {'id': 125449182663278592, 'name': 'Vyryn'}, 'guild': {'id': 'private', 'name': 'Vyryn'}, 'channel': {'id': 635293199484846090, 'name': 'Vyryn'}, 'content': '.reload basics'}
