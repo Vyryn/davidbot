@@ -163,11 +163,21 @@ def log(message, mm):
     guild = mm.guild.name
     channel = mm.channel.name
     # logmsg = 'MSG@{}:  {}:{}'.format(now(), message['guild']['name'],message['channel']['name'])
-    with open(f'./logs/{guild}_#{channel}_{today()}_log.log', 'a+') as f:
+    try:
+        with open(f'./logs/{guild}/{channel}_{today()}_log.log', 'a+') as f:
+            try:
+                f.write(str(message) + '\n')
+            except UnicodeEncodeError:
+                f.write(f'WRN@{now()}: A UnicodeEncodeError occurred trying to write a message log.\n')
+    except:
         try:
-            f.write(str(message) + '\n')
-        except UnicodeEncodeError:
-            f.write(f'WRN@{now()}: A UnicodeEncodeError occurred trying to write a message log.\n')
+            with open(f'./logs/{guild}_{today()}_log.log', 'a+') as f:
+                try:
+                    f.write(str(message) + '\n')
+                except UnicodeEncodeError:
+                    f.write(f'WRN@{now()}: A UnicodeEncodeError occurred trying to write a message log.\n')
+        except:
+            print('Something went very wrong trying to log a message.')
     return
 
 
