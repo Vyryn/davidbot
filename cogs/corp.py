@@ -348,16 +348,8 @@ class Corp(commands.Cog):
         embed.add_field(name="User:", value=ctx.author.mention, inline=False)
         embed.add_field(name="Citizen Number #", value=citizen['citizen_record'], inline=False)
         embed.add_field(name="RSI URL:", value=profiles_url + rsi_handle.content, inline=False)
-        try:
-            languages = citizen['languages']
-            embed.add_field(name="Languages:", value=languages, inline=False)
-        except KeyError:
-            pass
-        try:
-            location = citizen['location']
-            embed.add_field(name="Location:", value=location, inline=False)
-        except KeyError:
-            pass
+        embed.add_field(name="Languages:", value=f"{citizen['languages']}.", inline=False)
+        embed.add_field(name="Location:", value=f"{citizen['location']}.", inline=False)
         embed.add_field(name="Joined CORP:", value=joined, inline=False)
         embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
