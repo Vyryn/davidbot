@@ -304,8 +304,8 @@ class Corp(commands.Cog):
         if ready:
             joined = now()
             rsi_number = citizen['citizen_record']
-            languages = citizen['languages']
-            location = citizen['location']
+            languages = citizen.get('languages', '')
+            location = citizen.get('location', '')
             joined_rsi = citizen['enlisted']
             hr_rep = random.choice(hr_reps)
             adduser(ctx.author, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
@@ -348,8 +348,16 @@ class Corp(commands.Cog):
         embed.add_field(name="User:", value=ctx.author.mention, inline=False)
         embed.add_field(name="Citizen Number #", value=citizen['citizen_record'], inline=False)
         embed.add_field(name="RSI URL:", value=profiles_url + rsi_handle.content, inline=False)
-        embed.add_field(name="Languages:", value=citizen['languages'], inline=False)
-        embed.add_field(name="Location:", value=citizen['location'], inline=False)
+        try:
+            languages = citizen['languages']
+            embed.add_field(name="Languages:", value=languages, inline=False)
+        except KeyError:
+            pass
+        try:
+            location = citizen['location']
+            embed.add_field(name="Location:", value=location, inline=False)
+        except KeyError:
+            pass
         embed.add_field(name="Joined CORP:", value=joined, inline=False)
         embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)

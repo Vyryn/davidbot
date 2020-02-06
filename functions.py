@@ -21,9 +21,9 @@ statuses = ["Being an adult is just walking around wondering what you're forgett
             "If at first you don't succeed, we have a lot in common.",
             'I think we should get rid of democracy. All in favor raise your hand.']
 # Which discord perms are consider basic/important
-basicperms = ['administrator', 'manage_guild', 'ban_members', 'manage_roles']
+basicperms = ['administrator', 'manage_guild', 'ban_members', 'manage_roles', 'manage_messages']
 # Which discord perms are consider significant/notable
-sigperms = ['deafen_members', 'kick_members', 'manage_channels', 'manage_emojis', 'manage_messages',
+sigperms = ['deafen_members', 'kick_members', 'manage_channels', 'manage_emojis',
             'manage_nicknames', 'manage_webhooks', 'mention_everyone', 'move_members', 'mute_members',
             'priority_speaker', 'view_audit_log']
 # Authorization level of someone not in bot_commanders. Think carefully before changing this.
