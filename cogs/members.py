@@ -17,13 +17,14 @@ class Members(commands.Cog):
     @commands.Cog.listener()
     @commands.guild_only()
     async def on_member_join(self, member: discord.Member):
-        print(f'{member.display_name} has joined {member.guild}.')
+        print(f'{member.display_name} ({member.mention}) has joined {member.guild}.')
 
     @commands.Cog.listener()
     @commands.guild_only()
     async def on_member_remove(self, member: discord.Member):
-        print(f'{member.display_name} has left {member.guild}.')
-        await member.guild.get_channel(log_channel).send(f'{member.display_name} has left {member.guild}.')
+        print(f'{member.display_name} ({member.mention}) has left {member.guild}.')
+        await member.guild.get_channel(log_channel).send(f'{member.display_name} ({member.mention}) has left'
+                                                         f' {member.guild}.')
 
     # List out the perms of a member
     @commands.command(name='perms', aliases=['permissions', 'checkperms', 'whois', 'perm'], description='Who dat?')
