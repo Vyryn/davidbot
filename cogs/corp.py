@@ -10,6 +10,10 @@ import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
 
+corp_tag_id = 92031682596601856
+registration_channel = 204841604522049536
+log_channel = 272278325244723200  # 666816919399170049 in testing server
+
 # starcitizen-api.com api key. Linked to Vyryn's discord account. 1000 queries per day max.
 apikey = 'cccfce53def9b101e80e5220e801025a'
 # https://starcitizen-api.com/index.php
@@ -22,7 +26,6 @@ timeout_msg = "You took too long to respond. You will need to start the command 
 get_a_person = "Okay, let me wake up the team in the Office. Depending on timezones, we'll see who we can get..."
 min_rand = 100000 - 1
 deltime = 1800  # seconds minimum wait time to time out
-log_channel = 666816919399170049
 session = aiohttp.ClientSession()
 
 hr_reps = ['Vyryn', 'RotorBoy', 'Revoxxer', 'Chippy_X', 'ChrispyKoala', 'DARTHEDDEUS', 'Mog_No_1']
@@ -144,7 +147,7 @@ class Corp(commands.Cog):
         Register for the Corporation!
         """
         # If already registered, don't let them register again
-        if ctx.guild.get_role(667268366456717332) in ctx.author.roles:
+        if ctx.guild.get_role(667268366456717332) in ctx.author.roles or ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
             await ctx.send('It looks like you already have a Corporateer tag.')
             return
 
@@ -301,6 +304,7 @@ class Corp(commands.Cog):
                            f" to your bio and then re-run this command.__** "
         await ctx.send(message)
         # Yay! Feedback time
+        hr_rep = "N/A"
         if ready:
             joined = now()
             rsi_number = citizen['citizen_record']
@@ -310,7 +314,7 @@ class Corp(commands.Cog):
             hr_rep = random.choice(hr_reps)
             adduser(ctx.author, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
             try:
-                await ctx.author.add_roles(ctx.guild.get_role(667268366456717332))
+                await ctx.author.add_roles(ctx.guild.get_role(corp_tag_id))
             except PermissionError:
                 await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                                "and my role is high enough in the role list.")
@@ -334,16 +338,16 @@ class Corp(commands.Cog):
             await ctx.send(get_a_person)
             return
         await ctx.send(
-            content="Okay! All done, enjoy your time here at Corp. Your randomly selected HR rep is `Vyryn`. If you "
+            content="Okay! All done, enjoy your time here at Corp. Your randomly selected HR rep is `{hr_rep}`. If you "
                     "have any questions I'm not able to answer, please do contact them. This is our new members "
                     "guide, it may be of use to you. Read at your leisure. :smiley:",
             file=discord.File('New_Members_Guide_V2.1.pdf'))
         await ctx.send("When you're ready to join some divisions, type `^reqdiv division`")
 
         # Log for HR/bookkeeping
-        # await self.bot.get_channel(666869744745578517).send(
-        #     f"**{ctx.author.mention}** has successfully become a Corporateer at {now}. Their RSI link is:\n"
-        #     f"```{profiles_url + rsi_handle.content}```")
+        await self.bot.get_channel(registration_channel).send(
+            f"**{ctx.author.mention}** has successfully become a Corporateer at {now()}. Their RSI link is:\n"
+            f"```{profiles_url + rsi_handle.content}```")
         embed = discord.Embed(title='New Corporateer!', description='', color=ctx.author.color)
         embed.add_field(name="User:", value=ctx.author.mention, inline=False)
         embed.add_field(name="Citizen Number #", value=citizen['citizen_record'], inline=False)
@@ -455,6 +459,20 @@ class Corp(commands.Cog):
         result = adduser(user, rsi, languages, location, joined_rsi, rsi_number, joined, hr_rep)
         await ctx.send(result)
         print(result)
+
+    @commands.command(name='remove_corp', description='Removes someone\'s Corporateer tag')
+    @commands.check(auth(1))
+    async def remove_corp(self, ctx, user: discord.Member):
+        """
+        Removes a corporateer tag. Requires Auth 1.
+        """
+        try:
+            await user.remove_roles(ctx.guild.get_role(corp_tag_id))
+            print(f'Removed corp tag from {user} by request from {ctx.author}.')
+            await ctx.send(f'Removed corp tag from {user} by request from {ctx.author}.')
+        except PermissionError:
+            await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
+                               "and my role is high enough in the role list.")
 
 
 def setup(bot):
