@@ -405,7 +405,7 @@ class Corp(commands.Cog):
         Request a division tag for any divs in divs
         """
         for channel in ctx.guild.channels:
-            if channel.name.casefold() == 'management'.casefold():
+            if channel.name.casefold() == 'recruitment'.casefold():
                 management = channel
         divs_list = divs.split(' ')
         print(divs_list)
