@@ -17,14 +17,20 @@ class Members(commands.Cog):
     @commands.Cog.listener()
     @commands.guild_only()
     async def on_member_join(self, member: discord.Member):
+        embed = discord.Embed(title=f'{member} ({member.mention})', description='', color=discord.Color.teal())
+        embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.mention}')
+        embed.set_footer(text=f'User Joined • {now()}')
+        await member.guild.get_channel(log_channel).send('@here', embed=embed)
         print(f'{member.display_name} ({member.mention}) has joined {member.guild}.')
 
     @commands.Cog.listener()
     @commands.guild_only()
     async def on_member_remove(self, member: discord.Member):
+        embed = discord.Embed(title=f'{member} ({member.mention})', description='', color=discord.Color.gold())
+        embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.mention}')
+        embed.set_footer(text=f'User Left • {now()}')
+        await member.guild.get_channel(log_channel).send('@here', embed=embed)
         print(f'{member.display_name} ({member.mention}) has left {member.guild}.')
-        await member.guild.get_channel(log_channel).send(f'{member.display_name} ({member.mention}) has left'
-                                                         f' {member.guild}.')
 
     # List out the perms of a member
     @commands.command(name='perms', aliases=['permissions', 'checkperms', 'whois', 'perm'], description='Who dat?')
