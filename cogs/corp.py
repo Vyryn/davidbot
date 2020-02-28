@@ -404,6 +404,11 @@ class Corp(commands.Cog):
         """
         Request a division tag for any divs in divs
         """
+        # If not yet registered, don't allow use of reqdiv
+        if not ctx.guild.get_role(667268366456717332) in ctx.author.roles and not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
+            await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
+            return
+
         for channel in ctx.guild.channels:
             if channel.name.casefold() == 'recruitment'.casefold():
                 management = channel
