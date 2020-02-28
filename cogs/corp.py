@@ -271,8 +271,8 @@ class Corp(commands.Cog):
                            "correctly?__** Please double check and try this command again. It is also possible the "
                            "RSI site is down for the moment, try again in a few minutes.")
             return
-        if f'I am {ctx.author}' in citizen['bio'] and citizen['handle'] == handle_e and citizen['orgs'][0][
-            'name'] == 'The Corporation':
+        orgnames = [i['name'] for i in citizen['orgs']]
+        if f'I am {ctx.author}' in citizen['bio'] and citizen['handle'] == handle_e and 'The Corporation' in orgnames:
             message += "Great news! I was able to confirm you put the phrase in your bio *and* that you are in the" \
                        " Corporation. I'll go ahead and assign your Corporateer tag."
             ready = True
@@ -283,7 +283,7 @@ class Corp(commands.Cog):
             else:
                 message += "Hmm, I wasn't able to find your profile. **__Are you sure you spelled your handle " \
                            "correctly?__** Please double check and try again."
-            if citizen['orgs'][0]['name'] == 'The Corporation':
+            if 'The Corporation' in orgnames:
                 if flag:
                     message += "Plus, "
                 else:

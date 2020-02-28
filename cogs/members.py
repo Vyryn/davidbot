@@ -21,8 +21,8 @@ class Members(commands.Cog):
     @commands.Cog.listener()
     @commands.guild_only()
     async def on_member_join(self, member: discord.Member):
-        embed = discord.Embed(title=f'{member} ({member.mention})', description='', color=discord.Color.teal())
-        embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.mention}')
+        embed = discord.Embed(title='', description='', color=discord.Color.teal())
+        embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.id}')
         embed.set_footer(text=f'User Joined • {now()}')
         await member.guild.get_channel(log_channel).send('@here', embed=embed)
         print(f'{member.display_name} ({member.mention}) has joined {member.guild}.')
@@ -30,8 +30,8 @@ class Members(commands.Cog):
     @commands.Cog.listener()
     @commands.guild_only()
     async def on_member_remove(self, member: discord.Member):
-        embed = discord.Embed(title=f'{member} ({member.mention})', description='', color=discord.Color.gold())
-        embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.mention}')
+        embed = discord.Embed(title='', description='', color=discord.Color.gold())
+        embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.id}')
         embed.set_footer(text=f'User Left • {now()}')
         await member.guild.get_channel(log_channel).send('@here', embed=embed)
         print(f'{member.display_name} ({member.mention}) has left {member.guild}.')
