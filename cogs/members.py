@@ -90,10 +90,10 @@ class Members(commands.Cog):
             target = ctx.member
         # Toggle ping role
         if the_ping_role in target.roles:
-            target.remove_roles(the_ping_role)
+            await target.remove_roles(the_ping_role)
             await ctx.send(f'Removed {target}\'s @PING role.')
         else:
-            target.add_roles(the_ping_role)
+            await target.add_roles(the_ping_role)
             await ctx.send(f'Added {target}\'s @PING role.')
 
 def setup(bot):
