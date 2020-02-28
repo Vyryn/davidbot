@@ -8,6 +8,7 @@ log_channel = 272278325244723200
 ping_role = 680917298906923214
 recruiter_role = 376500752203644928
 
+
 class Members(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -72,7 +73,8 @@ class Members(commands.Cog):
         print(f'Perms command used by {ctx.author} at {now()} on member {member} with detail {detail}.')
 
     # Toggle @PING role
-    @commands.command(name='getpingrole', aliases=['pingme', 'noping'], description='Self-assign or remove the @PING role.')
+    @commands.command(name='getpingrole', aliases=['pingme', 'noping'],
+                      description='Self-assign or remove the @PING role.')
     @commands.guild_only()
     async def toggle_ping_tag(self, ctx, member: discord.Member = None):
         """
@@ -86,8 +88,8 @@ class Members(commands.Cog):
         target = ctx.author
         the_ping_role = ctx.guild.get_role(ping_role)
         # For recruiters
-        if ctx.guild.get_role(recruiter_role) in ctx.author.roles and member != None:
-            target = ctx.member
+        if ctx.guild.get_role(recruiter_role) in ctx.author.roles and member is not None:
+            target = member
         # Toggle ping role
         if the_ping_role in target.roles:
             await target.remove_roles(the_ping_role)
@@ -95,6 +97,7 @@ class Members(commands.Cog):
         else:
             await target.add_roles(the_ping_role)
             await ctx.send(f'Added {target}\'s @PING role.')
+
 
 def setup(bot):
     bot.add_cog(Members(bot))
