@@ -411,8 +411,12 @@ class Corp(commands.Cog):
         print(divs_list)
         for div in divs_list:
             print(div)
-            if div == 'human':
+            if div.casefold() == 'human':
                 div = 'human resources'
+            elif div.casefold() == 'ground':
+                div = 'ground security'
+            elif div.casefold() == 'space':
+                div = 'space security'
             for role in ctx.guild.roles:
                 flag = False
                 if role.name.casefold() == f'DL {div}'.casefold():
