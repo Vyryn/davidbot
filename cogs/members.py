@@ -1,9 +1,12 @@
 import discord
 from discord.ext import commands
+
+from cogs.corp import corp_tag_id
 from functions import basicperms, sigperms, deltime, embed_footer, now
 
 log_channel = 272278325244723200
-
+ping_role = 680917298906923214
+recruiter_role = 376500752203644928
 
 class Members(commands.Cog):
     def __init__(self, bot):
@@ -68,6 +71,30 @@ class Members(commands.Cog):
         await ctx.send(content=None, embed=embed, delete_after=deltime * 5)
         print(f'Perms command used by {ctx.author} at {now()} on member {member} with detail {detail}.')
 
+    # Toggle @PING role
+    @commands.command(name='getpingrole', aliases=['pingme', 'noping'], description='Self-assign or remove the @PING role.')
+    @commands.guild_only()
+    async def toggle_ping_tag(self, ctx, member: discord.Member = None):
+        """
+        Assign yourself the @PING tag. Requires a Corporateer tag.
+        Recruiters can also assign the @PING tag to other people.
+        """
+        # If not yet registered, don't allow use of ping
+        if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
+            await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
+            return
+        target = ctx.author
+        the_ping_role = ctx.guild.get_role(ping_role)
+        # For recruiters
+        if ctx.guild.get_role(recruiter_role) in ctx.author.roles and member != None:
+            target = ctx.member
+        # Toggle ping role
+        if the_ping_role in target.roles:
+            target.remove_roles(the_ping_role)
+            await ctx.send(f'Removed {target}\'s @PING role.')
+        else:
+            target.add_roles(the_ping_role)
+            await ctx.send(f'Added {target}\'s @PING role.')
 
 def setup(bot):
     bot.add_cog(Members(bot))
