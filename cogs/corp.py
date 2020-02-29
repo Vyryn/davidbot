@@ -211,7 +211,7 @@ class Corp(commands.Cog):
             # Confirm RSI handle
             flag2 = False
             while not flag2:
-                await ctx.send(f"Thanks! I'd just like to confirm: Your RSI handle is   **`{handle_e}`**   ?\n"
+                await ctx.send(f"I'd just like to confirm: Your RSI handle is   **`{handle_e}`**   ?\n"
                                f"**__Confirm with__** \n```\nok```\n, or type it again if you made a mistake.")
                 try:
                     response = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
@@ -228,14 +228,15 @@ class Corp(commands.Cog):
                     flag = True
                     flag2 = True
                 else:
-                    handle_e = response.content
+                    split = response.content.split('/')
+                    handle_e = split[len(split)-1]
         # Confirm profile is theirs
         # one_time_code = random.randint(min_rand, min_rand * 10)
         await ctx.send(
             content=f"Great. Next I need to check your profile actually belongs to you.\n The way I'd like to do "
                     f"that is by having you **__add the phrase__** \n\nI am {ctx.author} on Discord\n\n**__ to your"
-                    f" profile__** and then **__type__** \n```\nok```\n and I'll take a look at your profile. Or, "
-                    f"if you're not sure how to do that, type `how`.")
+                    f" profile__** and then type `ok` and I'll take a look at your profile. Or, "
+                    f"if you're not sure how to do that, **__type__** `how`.")
         try:
             response = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
         except TimeoutError:
@@ -251,8 +252,7 @@ class Corp(commands.Cog):
                 content=f"Here's a more detailed description of how to do that.\n```\n"
                         f"1) Go to https://robertsspaceindustries.com/account/profile and scroll down to where it says 'Short Bio'\n"
                         f"2) Add 'I am {ctx.author} on Discord.' to the 'Short Bio' and then Click 'APPLY ALL CHANGES'\n"
-                        f"3) Double check that The Corporation is set as your main organization and visible__** on your"
-                        f" profile.\n"
+                        f"3) Check that you are in The Corporation on RSI and it is visible on your profile.\n"
                         f"4) Tell me 'ok' and I'll check your profile.```",
                 file=discord.File('rsi_register_helper_image_2.png'))
             try:
