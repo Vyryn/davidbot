@@ -208,8 +208,17 @@ class Dev(commands.Cog):
 
         result = (await eval(f"{fn_name}()", env))
         endtime = time.time_ns()
-        await ctx.send(f'Command took {(endtime-starttime)/1000000}ms to run.\nResult: {result}')
+        await ctx.send(f'Command took {(endtime - starttime) / 1000000}ms to run.\nResult: {result}')
 
+    @commands.command(name='delete', description='Delete a single message by ID')
+    @commands.check(auth(6))
+    async def delete(self, ctx, message_id: int):
+        """
+        Deletes a single message.
+        Requires: Auth 6.
+        Used for cleaning up bot mistakes.
+        """
+        await (await ctx.channel.fetch_message(message_id)).delete()
 
 
 def setup(bot):

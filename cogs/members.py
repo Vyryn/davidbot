@@ -2,11 +2,7 @@ import discord
 from discord.ext import commands
 
 from cogs.corp import corp_tag_id
-from functions import basicperms, sigperms, deltime, embed_footer, now
-
-log_channel = 272278325244723200
-ping_role = 680917298906923214
-recruiter_role = 376500752203644928
+from functions import basicperms, sigperms, deltime, embed_footer, now, log_channel, ping_role, recruiter_role
 
 
 class Members(commands.Cog):

@@ -1,42 +1,16 @@
 import random
-
 import aiohttp
 import discord
 from discord.ext import commands
-
 from cogs.database import adduser, get_rsi
-from functions import now, today, auth
+from functions import now, today, auth, corp_tag_id, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
+    timeout_msg, get_a_person, timeout as deltime, hr_reps, get_item, div_req_notif_ch, welcome_david_msg, \
+    understand_david_msg, help_david_msg
 import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
 
-corp_tag_id = 92031682596601856
-registration_channel = 204841604522049536
-log_channel = 272278325244723200  # 666816919399170049 in testing server
-
-# starcitizen-api.com api key. Linked to Vyryn's discord account. 1000 queries per day max.
-apikey = 'cccfce53def9b101e80e5220e801025a'
-# https://starcitizen-api.com/index.php
-# http://sc-tools.org/#/api
-
-DEFAULT_RSI_URL = 'https://robertsspaceindustries.com'
-profiles_url = 'https://robertsspaceindustries.com/citizens/'
-timeout_msg = "You took too long to respond. You will need to start the command over again if you wish to continue" \
-              " your application."
-get_a_person = "Okay, let me wake up the team in the Office. Depending on timezones, we'll see who we can get..."
-min_rand = 100000 - 1
-deltime = 1800  # seconds minimum wait time to time out
 session = aiohttp.ClientSession()
-
-hr_reps = ['Vyryn', 'RotorBoy', 'Revoxxer', 'Chippy_X', 'ChrispyKoala', 'DARTHEDDEUS', 'Mog_No_1']
-
-
-def get_item(iterable_or_dict, index, default=None):
-    """Return iterable[index] or default if IndexError is raised."""
-    try:
-        return iterable_or_dict[index]
-    except (IndexError, KeyError):
-        return default
 
 
 def fetch_citizen(name, url=DEFAULT_RSI_URL, endpoint='/citizens', skip_orgs=False):
@@ -48,7 +22,7 @@ def fetch_citizen(name, url=DEFAULT_RSI_URL, endpoint='/citizens', skip_orgs=Fal
     page = _requests.get(citizen_url, headers=None)
     print(page)
     if page.status_code == 404:
-        print(f'Received a 404 Error Code from the web query to {citizen_url}.')
+        print(f'Received a 404 Error Code from query to {citizen_url}.')
     if page.status_code == 200:
         soup = _bs(page.text, features='lxml')
         _ = [_.text for _ in soup.select(".info .value")[:3]]
@@ -69,6 +43,8 @@ def fetch_citizen(name, url=DEFAULT_RSI_URL, endpoint='/citizens', skip_orgs=Fal
         try:
             result['citizen_record'] = int(result['citizen_record'][1:])
         except:
+            print('Encountered unexpceted citizen_record. Making citizen_record 1000000000.')
+            result['citizen_record'] = 1000000000
             pass
 
         _ = {_.select_one('span').text:
@@ -154,18 +130,14 @@ class Corp(commands.Cog):
             return
 
         # Make sure they understand
-        await ctx.send(f"Hi, I'm David. \nWelcome {ctx.author.mention} to the Corporation! I'm your friendly "
-                       f"neighborhood robot and I'll try my best to walk you through our process. \nIf you're ready to"
-                       f" begin, **__please type__** \n```\nok```\nOr, if at any stage this seems too difficult, type"
-                       f" `help` and I'll get a real person, it will just take longer.")
+        await ctx.send(welcome_david_msg.format(author=ctx.author.mention))
         try:
             response = await self.bot.wait_for('message', check=check_ok(ctx.author), timeout=deltime)
         except TimeoutError:
             await ctx.send(timeout_msg)
             return
         if response.content.casefold() == 'help'.casefold():
-            await ctx.guild.get_channel(log_channel).send(f'@Recruiter, {ctx.author} has requested a personal touch '
-                                                          f'for assistance with their application.')
+            await ctx.guild.get_channel(log_channel).send(help_david_msg.format(ctx.author))
             await ctx.send(get_a_person)
             return
         # Get RSI handle, can get link from this.
@@ -173,8 +145,7 @@ class Corp(commands.Cog):
         handle_e = ""
         while not flag:
             await ctx.send(
-                content=f"Great. Now I know you can understand me :smiley:\nCan you **__please post your RSI handle__**"
-                        f" here? Or, if you're not sure how to that, type `how`.")
+                content=understand_david_msg)
             try:
                 rsi_handle = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
             except TimeoutError:
@@ -229,7 +200,7 @@ class Corp(commands.Cog):
                     flag2 = True
                 else:
                     split = response.content.split('/')
-                    handle_e = split[len(split)-1]
+                    handle_e = split[len(split) - 1]
         # Confirm profile is theirs
         # one_time_code = random.randint(min_rand, min_rand * 10)
         await ctx.send(
@@ -341,9 +312,9 @@ class Corp(commands.Cog):
             await ctx.send(get_a_person)
             return
         await ctx.send(
-            content="Okay! All done, enjoy your time here at Corp. Your randomly selected HR rep is `{hr_rep}`. If you "
-                    "have any questions I'm not able to answer, please do contact them. This is our new members "
-                    "guide, it may be of use to you. Read at your leisure. :smiley:",
+            content=f"Okay! All done, enjoy your time here at Corp. Your randomly selected HR rep is `{hr_rep}`. If you"
+                    f" have any questions I'm not able to answer, please do contact them. This is our new members "
+                    f"guide, it may be of use to you. Read at your leisure. :smiley:",
             file=discord.File('New_Members_Guide_V2.1.pdf'))
         await ctx.send("When you're ready to join some divisions, type `^reqdiv division`")
 
@@ -413,7 +384,7 @@ class Corp(commands.Cog):
             return
 
         for channel in ctx.guild.channels:
-            if channel.name.casefold() == 'recruitment'.casefold():
+            if channel.name.casefold() == div_req_notif_ch.casefold():
                 management = channel
         divs_list = divs.split(' ')
         print(divs_list)

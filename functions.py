@@ -2,7 +2,6 @@ import datetime
 import json
 from attr import dataclass
 
-
 # The default global bot prefix
 global_prefix = ';'
 # The directory for cogs
@@ -11,6 +10,45 @@ cogs_dir = 'cogs'
 owner_id = 125449182663278592
 # The id of the bot
 bot_id = 670443801474760734
+# Default number of seconds to wait before deleting many bot responses and player commands
+deltime = 10
+# The bot commanders (imported from a file)
+bot_commanders = {}  # {125449182663278592: 10, 631938498722529310: 7}
+# The ids of ongoing polls (imported from a file)
+poll_ids = {}
+# Whether this person has used a command that requires a confirmation
+confirmed_ids = {}
+
+# Some channel and role IDs
+ping_role = 680917298906923214
+recruiter_role = 376500752203644928
+corp_tag_id = 92031682596601856
+registration_channel = 204841604522049536
+log_channel = 272278325244723200  # 666816919399170049 in testing server
+div_req_notif_ch = 'recruitment'
+
+# The default URL for RSI profiles
+DEFAULT_RSI_URL = 'https://robertsspaceindustries.com'
+profiles_url = 'https://robertsspaceindustries.com/citizens/'
+
+# Some registration messages
+timeout_msg = 'You took too long to respond. You will need to start the command over again if you wish to continue' \
+              ' your application.'
+get_a_person = "Okay, let me wake up the team in the Office. Depending on timezones, we'll see who we can get..."
+welcome_david_msg = "Hi, I'm David. \nWelcome {author} to the Corporation! I'm your friendly neighborhood robot and" \
+                    " I'll try my best to walk you through our process. \nIf you're ready to begin, " \
+                    "**__please type__** \n```\nok```\nOr, if at any stage this seems too difficult, type `help` and " \
+                    "I'll get a real person, it will just take longer. "
+understand_david_msg = "Great. Now I know you can understand me :smiley:\nCan you **__please post your RSI handle__**" \
+                       " here? Or, if you're not sure how to that, type `how`."
+help_david_msg = '@Recruiter, {} has requested a personal touch for assistance with their application.'
+
+# The possible randomly assigned values of 'hr_rep' in the corp DB
+hr_reps = ['Vyryn', 'RotorBoy', 'Revoxxer', 'Chippy_X', 'ChrispyKoala', 'DARTHEDDEUS', 'Mog_No_1']
+
+# The number of seconds to wait to time out the registration process from inactivity
+timeout = 1800
+
 # The bot randomly selects one of these statuses at startup
 statuses = ["Being an adult is just walking around wondering what you're forgetting.",
             'A clean house is the sign of a broken computer.',
@@ -36,14 +74,6 @@ perms_info = {0: '(No other dev perms)', 1: 'Can use echo and auth check', 2: 'C
 number_reactions = ["1\u20e3", "2\u20e3", "3\u20e3", "4\u20e3", "5\u20e3", "6\u20e3", "7\u20e3",
                     "8\u20e3", "9\u20e3"]
 reactions_to_nums = {"1⃣": 1, "2⃣": 2, "3⃣": 3, "4⃣": 4, "5⃣": 5, "6⃣": 6, "7⃣": 7, "8⃣": 8, "9⃣": 9}
-# Default number of seconds to wait before deleting many bot responses and player commands
-deltime = 10
-# The bot commanders (imported from a file)
-bot_commanders = {}  # {125449182663278592: 10, 631938498722529310: 7}
-# The ids of ongoing polls (imported from a file)
-poll_ids = {}
-# Whether this person has used a command that requires a confirmation
-confirmed_ids = {}
 
 
 # Helper method for opening a json
@@ -181,11 +211,19 @@ def log(message, mm):
     return
 
 
-# Returns the base 10 order of magnitude of a number
 def order(x, count=0):
+    """Returns the base 10 order of magnitude of a number"""
     if x / 10 >= 1:
         count += order(x / 10, count) + 1
     return count
+
+
+def get_item(iterable_or_dict, index, default=None):
+    """Return iterable[index] or default if IndexError is raised."""
+    try:
+        return iterable_or_dict[index]
+    except (IndexError, KeyError):
+        return default
 
 
 # For user info
