@@ -30,6 +30,7 @@ session = aiohttp.ClientSession()
 
 hr_reps = ['Vyryn', 'RotorBoy', 'Revoxxer', 'Chippy_X', 'ChrispyKoala', 'DARTHEDDEUS', 'Mog_No_1']
 
+
 def get_item(iterable_or_dict, index, default=None):
     """Return iterable[index] or default if IndexError is raised."""
     try:
@@ -114,7 +115,7 @@ def fetch_citizen(name, url=DEFAULT_RSI_URL, endpoint='/citizens', skip_orgs=Fal
 def check_ok(author):
     def in_check(message):
         return message.author == author and (
-                    'ok'.casefold() in message.content.casefold() or 'help'.casefold() in message.content.casefold())
+                'ok'.casefold() in message.content.casefold() or 'help'.casefold() in message.content.casefold())
 
     return in_check
 
@@ -147,7 +148,8 @@ class Corp(commands.Cog):
         Register for the Corporation!
         """
         # If already registered, don't let them register again
-        if ctx.guild.get_role(667268366456717332) in ctx.author.roles or ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
+        if ctx.guild.get_role(667268366456717332) in ctx.author.roles or ctx.guild.get_role(
+                corp_tag_id) in ctx.author.roles:
             await ctx.send('It looks like you already have a Corporateer tag.')
             return
 
@@ -272,7 +274,8 @@ class Corp(commands.Cog):
                            "RSI site is down for the moment, try again in a few minutes.")
             return
         orgnames = [i['name'] for i in citizen['orgs']]
-        if f'I am {ctx.author}' in citizen['bio'] and citizen['handle'] == handle_e and 'The Corporation' in orgnames:
+        if f'I am {ctx.author}' in citizen['bio'] and citizen['handle'].casefold() == handle_e.casefold() and \
+                'The Corporation' in orgnames:
             message += "Great news! I was able to confirm you put the phrase in your bio *and* that you are in the" \
                        " Corporation. I'll go ahead and assign your Corporateer tag."
             ready = True
@@ -428,7 +431,7 @@ class Corp(commands.Cog):
                     flag = True
                     print('found one div!')
                     await management.send(f'{role.mention}, {ctx.author} is interested in joining {div}! Please contact'
-                                   f' them at your convenience to help them with that.')
+                                          f' them at your convenience to help them with that.')
                     await ctx.send(f"Okay, I have informed the division leader that you're interested in joining"
                                    f" {div}.")
                     break
@@ -436,8 +439,8 @@ class Corp(commands.Cog):
                     flag = True
                     print('found one dept!')
                     await management.send(f'{role.mention}, {ctx.author} is interested in joining your department! '
-                                       f'Please contact them at your convenience to help them choose a division and '
-                                       f'join it.')
+                                          f'Please contact them at your convenience to help them choose a division and '
+                                          f'join it.')
                     await ctx.send(f"Hmm, {div} is actually a department rather than a division, a larger structure "
                                    f"that you can't join directly. However, I've contacted the department head to "
                                    f"help you out with choosing a division")
@@ -481,7 +484,7 @@ class Corp(commands.Cog):
             await ctx.send(f'Removed corp tag from {user} by request from {ctx.author}.')
         except PermissionError:
             await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
-                               "and my role is high enough in the role list.")
+                           "and my role is high enough in the role list.")
 
 
 def setup(bot):
