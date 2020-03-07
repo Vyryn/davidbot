@@ -396,6 +396,8 @@ class Corp(commands.Cog):
                 div = 'ground security'
             elif div.casefold() == 'space':
                 div = 'space security'
+            elif div.casefold() == 'public':
+                div = 'public relations'
             for role in ctx.guild.roles:
                 flag = False
                 if role.name.casefold() == f'DL {div}'.casefold():

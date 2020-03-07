@@ -3,47 +3,78 @@ import random
 import discord
 from discord.ext import commands
 import mysql.connector as mariadb
-from mysql.connector import IntegrityError, InterfaceError
+from mysql.connector import IntegrityError, InterfaceError, OperationalError
 
 from functions import auth, now
 from privatevars import DBUSER, DBPASS
 
 global cursor
-db = mariadb.connect(
-    host='localhost',
-    user=DBUSER,
-    password=DBPASS,
-    database='datacamp'
-)
-cursor = db.cursor()
-print('Connected to database.')
+global db
 
 
-def pquery(querry):
-    cursor.execute(querry)
+def connect():
+    global cursor, db
+    try:
+        db = mariadb.connect(
+            host='localhost',
+            user=DBUSER,
+            password=DBPASS,
+            database='datacamp'
+        )
+        cursor = db.cursor()
+        print('Connected to database.')
+    except:
+        print('Could not connect to database.')
+        print(f'An unexpected error occurred when trying to connect to the database for connect() at {now()}.')
+        pass
+
+
+def disconnect():
+    db.close()
+
+
+def pquery(query):
+    connect()
+    cursor.execute(query)
     return cursor.fetchall()
 
 
 def adduser(user: discord.User, rsi, languages, location, joined_rsi, rsi_number, joined, hr_rep):
+    connect()
     query = "INSERT INTO users (id, name, user_name, rsi, rsi_link, languages, location, joined_rsi, rsi_number, " \
             "joined, hr_rep) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
     rsi_link = f'https://robertsspaceindustries.com/citizens/{rsi}'
     values = (
-    user.id, user.name, str(user), rsi, rsi_link, str(languages), str(location), str(joined_rsi), int(rsi_number),
-    str(joined), hr_rep)
+        user.id, user.name, str(user), rsi, rsi_link, str(languages), str(location), str(joined_rsi), int(rsi_number),
+        str(joined), hr_rep)
     try:
         cursor.execute(query, values)
         db.commit()
         return f'{cursor.rowcount} record(s) added successfully.'
     except IntegrityError:
         return f'It looks like that user was already in the database.'
+    except OperationalError:
+        return f'Reconnecting to database. Retrying...'
+        connect()
+        try:
+            cursor.execute(query, values)
+            db.commit()
+            return f'{cursor.rowcount} record(s) added successfully.'
+        except IntegrityError:
+            return f'It looks like that user was already in the database.'
+        except OperationalError:
+            return f'Sorry, I wasn\'t able to connect to the database right now. Try again later.'
+    disconnect()
 
 
-def get_rsi(member_id: int):  # Simply querry the DB for a single RSI link from a given user id
+def get_rsi(member_id: int):  # Simply query the DB for a single RSI link from a given user id
+    connect()
     query = "SELECT rsi_link FROM users WHERE id = (%s)"
     values = member_id
     cursor.execute(query, (values,))
-    return cursor.fetchall()[0][0]
+    return_val = cursor.fetchall()[0][0]
+    disconnect()
+    return return_val
 
 
 class Database(commands.Cog):
@@ -54,6 +85,7 @@ class Database(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f'Loading Cog {self.qualified_name}...')
+        connect()
         # cursor.execute("SHOW DATABASES")
         # databases = cursor.fetchall()
         # print(f"Databases: {databases}")
@@ -84,7 +116,7 @@ class Database(commands.Cog):
 
     def cog_unload(self):
         print(f"Closing {self.qualified_name} cog.")
-        db.close()
+        disconnect()
 
     @commands.command(name='listusers', description='Prints the list of users to the console.')
     @commands.check(auth(4))

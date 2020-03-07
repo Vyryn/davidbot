@@ -219,6 +219,8 @@ class Dev(commands.Cog):
         Used for cleaning up bot mistakes.
         """
         await (await ctx.channel.fetch_message(message_id)).delete()
+        await ctx.message.delete(delay=deltime)  # delete the command
+        print(f'Deleted message {message_id} in channel {ctx.channel} for user {ctx.author} at {now()}')
 
 
 def setup(bot):
