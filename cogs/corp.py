@@ -296,9 +296,9 @@ class Corp(commands.Cog):
                       f" HR team, type it now and I'll convey it. Otherwise, you can just type `ok` or `no` to finish" \
                       f" up."
         else:
-            message = f"I'm sorry you weren't able to complete the process this time around. If you have any feedback" \
-                      f" for the HR team, type it now and I'll convey it. Otherwise, you can just type `ok` or `no`" \
-                      f" to finish up."
+            await ctx.send(f"I'm sorry you weren't able to complete the process this time. When you're ready to try" \
+                           f" again, use `^register` again.")
+            return
         await ctx.send(message)
         try:
             feedback = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)

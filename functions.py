@@ -35,12 +35,12 @@ profiles_url = 'https://robertsspaceindustries.com/citizens/'
 timeout_msg = 'You took too long to respond. You will need to start the command over again if you wish to continue' \
               ' your application.'
 get_a_person = "Okay, let me wake up the team in the Office. Depending on timezones, we'll see who we can get..."
-welcome_david_msg = "Hi, I'm David. \nWelcome {author} to the Corporation! I'm your friendly neighborhood robot and" \
-                    " I'll try my best to walk you through our process. \nIf you're ready to begin, " \
-                    "**__please type__** \n```\nok```\nOr, if at any stage this seems too difficult, type `help` and " \
-                    "I'll get a real person, it will just take longer. "
+welcome_david_msg = "Welcome {author} to the Corporation! I'm David. Please join The Corporation on RSI. Once your" \
+                    " application is accepted, **__please type__** \n```\nok```\nOr, if at any stage this seems" \
+                    " too difficult, type `help` and I'll get a real person, it just may take longer. Note you will " \
+                    "need to be accepted on RSI to complete this process."
 understand_david_msg = "Great. Now I know you can understand me :smiley:\nCan you **__please post your RSI handle__**" \
-                       " here? Or, if you're not sure how to that, type `how`."
+                       " here? Or, if you're not sure how to that, type `how` or type `help` to get help from a person."
 help_david_msg = '@Recruiter, {} has requested a personal touch for assistance with their application.'
 
 # The possible randomly assigned values of 'hr_rep' in the corp DB
