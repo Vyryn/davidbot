@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 
 from cogs.corp import corp_tag_id
-from functions import basicperms, sigperms, deltime, embed_footer, now, log_channel, ping_role, recruiter_role
+from functions import basicperms, sigperms, deltime, embed_footer, now, log_channel, ping_role, recruiter_role, \
+    candidate_role
 
 
 class Members(commands.Cog):
@@ -100,6 +101,32 @@ class Members(commands.Cog):
         else:
             await target.add_roles(the_ping_role)
             await ctx.send(f'Added {target}\'s @PING role.')
+
+    # Toggle @Candidate role
+    @commands.command(name='trainme', aliases=['corpup'],
+                      description='Self-assign or remove the @Candidate role.')
+    @commands.guild_only()
+    async def toggle_candidate_tag(self, ctx, member: discord.Member = None):
+        """
+        Assign yourself the @Candidate tag. Requires a Corporateer tag.
+        Recruiters can also assign the @Candidate tag to other people.
+        """
+        # If not yet registered, don't allow use of ping
+        if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
+            await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
+            return
+        target = ctx.author
+        the_candidate_role = ctx.guild.get_role(candidate_role)
+        # For recruiters
+        if ctx.guild.get_role(recruiter_role) in ctx.author.roles and member is not None:
+            target = member
+        # Toggle candidate role
+        if the_candidate_role in target.roles:
+            await target.remove_roles(the_candidate_role)
+            await ctx.send(f'Removed {target}\'s @Candidate role.')
+        else:
+            await target.add_roles(the_candidate_role)
+            await ctx.send(f'Added {target}\'s @Candidate role.')
 
 
 def setup(bot):
