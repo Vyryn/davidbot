@@ -5,7 +5,7 @@ from discord.ext import commands
 from cogs.database import adduser, get_rsi
 from functions import now, today, auth, corp_tag_id, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
     timeout_msg, get_a_person, timeout as deltime, hr_reps, get_item, div_req_notif_ch, welcome_david_msg, \
-    understand_david_msg, help_david_msg
+    understand_david_msg, help_david_msg, recruiter_role
 import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
@@ -312,11 +312,16 @@ class Corp(commands.Cog):
             await ctx.send(get_a_person)
             return
         await ctx.send(
-            content=f"Okay! All done, enjoy your time here at Corp. Your HR rep is `{hr_rep}`. If you"
+            content=f"Welcome! Enjoy your time here at Corp. Your HR rep is `{hr_rep}`. If you"
                     f" have any questions I'm not able to answer, please do contact them. This is our new members "
                     f"guide, it may be of use to you. Read at your leisure. :smiley:",
             file=discord.File('New_Members_Guide_V2.1.pdf'))
-        await ctx.send("When you're ready to join some divisions, type `^reqdiv division`")
+        await ctx.send("The next step is to join some divisions. Much of the content of the Corporation is hidden and"
+                       " visible only to division members. You can choose one or several that you are interested in."
+                       " When you're ready to join some divisions, type `^reqdiv division`. Be sure to do so to see "
+                       "all the fun content!")
+        await ctx.send("If you'd like some training, type `^trainme` to let our trainers know you want to participate"
+                       " in the next M1 training session.")
 
         # Log for HR/bookkeeping
         await self.bot.get_channel(registration_channel).send(
@@ -333,9 +338,11 @@ class Corp(commands.Cog):
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
         await self.bot.get_channel(log_channel).send(f"They had the following feedback:\n```{feedback.content}```\n"
-                                                     f"@Human Resources, please give them a warm welcome in #lobby.\n"
-                                                     f"@Recruiter, please verify this user hasn't registered in the "
-                                                     f"past, and let me know if their Corporateer tag needs removing.")
+                                                     f"Human Resources, please give them a warm welcome in #lobby "
+                                                     f"then mark this post with :corpyes:\n "
+                                                     f"{ctx.guild.get_role(recruiter_role).mention()}, please verify "
+                                                     f"this user hasn't registered in the past, and use `^remove_corp`"
+                                                     f" if their Corporateer tag needs removing.")
 
     @commands.command(name='fetch_cit', description='Check citizen\'s rsi profile')
     async def fetch_citizen_cmd(self, ctx, user: str):
