@@ -312,7 +312,7 @@ class Corp(commands.Cog):
             await ctx.send(get_a_person)
             return
         await ctx.send(
-            content=f"Okay! All done, enjoy your time here at Corp. Your randomly selected HR rep is `{hr_rep}`. If you"
+            content=f"Okay! All done, enjoy your time here at Corp. Your HR rep is `{hr_rep}`. If you"
                     f" have any questions I'm not able to answer, please do contact them. This is our new members "
                     f"guide, it may be of use to you. Read at your leisure. :smiley:",
             file=discord.File('New_Members_Guide_V2.1.pdf'))
@@ -407,7 +407,7 @@ class Corp(commands.Cog):
                                           f' them at your convenience to help them with that.')
                     await ctx.send(f"Okay, I have informed the division leader that you're interested in joining"
                                    f" {div}.")
-                    break
+                    return
                 elif role.name.casefold() == f'DH {div}'.casefold():
                     flag = True
                     print('found one dept!')
@@ -417,12 +417,13 @@ class Corp(commands.Cog):
                     await ctx.send(f"Hmm, {div} is actually a department rather than a division, a larger structure "
                                    f"that you can't join directly. However, I've contacted the department head to "
                                    f"help you out with choosing a division")
-                    break
+                    return
             if not flag:
                 await ctx.send(
                     f"Hmm, I didn't find {div} in our list of divisions. Our divisions are all in the picture"
                     f" below.\nhttps://cdn.discordapp.com/attachments/420161713795760130/583071185797906432/CORPDe"
                     f"ptsDivs_revised_c.png")
+                return
 
     @commands.command(name='adduser', description='Adds a user to the database.')
     @commands.check(auth(1))
