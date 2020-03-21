@@ -5,7 +5,7 @@ from discord.ext import commands
 from cogs.database import adduser, get_rsi
 from functions import now, today, auth, corp_tag_id, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
     timeout_msg, get_a_person, timeout as deltime, hr_reps, get_item, div_req_notif_ch, welcome_david_msg, \
-    understand_david_msg, help_david_msg, recruiter_role
+    understand_david_msg, help_david_msg, recruiter_role, visitor_role
 import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
@@ -206,7 +206,7 @@ class Corp(commands.Cog):
         await ctx.send(
             content=f"Great. Next I need to check your profile actually belongs to you.\n The way I'd like to do "
                     f"that is by having you **__add the phrase__** \n\nI am {ctx.author} on Discord\n\n**__ to your"
-                    f" profile__** and then type `ok` and I'll take a look at your profile. Or, "
+                    f" RSI profile__** and then type `ok` and I'll take a look at your profile. Or, "
                     f"if you're not sure how to do that, **__type__** `how`.")
         try:
             response = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
@@ -289,6 +289,9 @@ class Corp(commands.Cog):
             adduser(ctx.author, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
             try:
                 await ctx.author.add_roles(ctx.guild.get_role(corp_tag_id))
+                if visitor_role in ctx.author.roles:
+                    await ctx.author.remove_roles(visitor_role)
+                    await ctx.send(f'Removed {ctx.author}\'s @Candidate role.')
             except PermissionError:
                 await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                                "and my role is high enough in the role list.")
