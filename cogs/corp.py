@@ -377,11 +377,18 @@ class Corp(commands.Cog):
         try:
             if len(channel.members) < 1:
                 await ctx.send(f'I see no one in that channel.')
-            for member in channel.members:
-                link = get_rsi(member.id)
-                await ctx.send(f'I see {member} in that channel, their link is {link}.')
+                return
         except AttributeError:
             await ctx.send('It looks like you may have misspelled that channel name. Try again.')
+            return
+        message = ['']
+        i = 0
+        for member in channel.members:
+            link = get_rsi(member.id)
+            message[i % 10].append(f'I see {member} in that channel, their link is {link}.')
+            i += 1
+        for mes in message:
+            await ctx.send(mes)
 
     @commands.command(name='reqdiv', description='Request a division tag for any division or divisions')
     async def reqdiv(self, ctx, *, divs):
@@ -440,6 +447,7 @@ class Corp(commands.Cog):
     async def adduser(self, ctx, user: discord.User, rsi):
         """
         Insert a user into the users database
+        Requires Auth 1
         """
         citizen = fetch_citizen(rsi)
         joined = now()
