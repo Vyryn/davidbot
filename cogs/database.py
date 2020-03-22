@@ -71,8 +71,11 @@ def get_rsi(member_id: int):  # Simply query the DB for a single RSI link from a
     connect()
     query = "SELECT rsi_link FROM users WHERE id = (%s)"
     values = member_id
-    cursor.execute(query, (values,))
-    return_val = cursor.fetchall()[0][0]
+    cursor.execute(query, values)
+    try:
+        return_val = cursor.fetchall()[0][0]
+    except IndexError:
+        return_val = 'Not Found'
     disconnect()
     return return_val
 
