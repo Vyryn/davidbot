@@ -385,7 +385,7 @@ class Corp(commands.Cog):
         for member in channel.members:
             link = get_rsi(member.id)
             rsi = link[link.rfind('/') + 1:len(link)]
-            members.append(rsi, str(member), link)
+            members.append((rsi, str(member), link))
         members = sorted(members)
         message = ['']
         i = 0
