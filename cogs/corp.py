@@ -388,7 +388,7 @@ class Corp(commands.Cog):
             try:
                 message[i % 10] += f'I see {member} in that channel, their link is {link}.'
             except IndexError:
-                message[i % 10] = ''
+                message.append('')
                 message[i % 10] += f'I see {member} in that channel, their link is {link}.'
             i += 1
         for mes in message:
