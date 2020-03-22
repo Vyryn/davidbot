@@ -385,7 +385,11 @@ class Corp(commands.Cog):
         i = 0
         for member in channel.members:
             link = get_rsi(member.id)
-            message[i % 10].append(f'I see {member} in that channel, their link is {link}.')
+            try:
+                message[i % 10] += f'I see {member} in that channel, their link is {link}.'
+            except IndexError:
+                message[i % 10] = ''
+                message[i % 10] += f'I see {member} in that channel, their link is {link}.'
             i += 1
         for mes in message:
             await ctx.send(mes)
