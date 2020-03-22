@@ -291,7 +291,7 @@ class Corp(commands.Cog):
                 await ctx.author.add_roles(ctx.guild.get_role(corp_tag_id))
                 if visitor_role in ctx.author.roles:
                     await ctx.author.remove_roles(visitor_role)
-                    await ctx.send(f'Removed {ctx.author}\'s @Candidate role.')
+                    await ctx.send(f'Removed {ctx.author}\'s @Visitor role.')
             except PermissionError:
                 await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                                "and my role is high enough in the role list.")
