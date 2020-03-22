@@ -381,15 +381,20 @@ class Corp(commands.Cog):
         except AttributeError:
             await ctx.send('It looks like you may have misspelled that channel name. Try again.')
             return
-        message = ['']
-        i = 0
+        members = []
         for member in channel.members:
             link = get_rsi(member.id)
+            rsi = link[link.rfind('/') + 1:len(link)]
+            members.append(rsi, str(member), link)
+        members = sorted(members)
+        message = ['']
+        i = 0
+        for member in members:
             try:
-                message[int(i / 10)] += f'I see {member} in that channel, their link is {link}.\n'
+                message[int(i / 10)] += f'I see {member[1]} in that channel, their link is {member[2]}.\n'
             except IndexError:
                 message.append('')
-                message[int(i / 10)] += f'I see {member} in that channel, their link is {link}.\n'
+                message[int(i / 10)] += f'I see {member[1]} in that channel, their link is {member[2]}.\n'
             i += 1
         for mes in message:
             await ctx.send(mes)
