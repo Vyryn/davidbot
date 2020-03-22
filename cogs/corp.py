@@ -389,7 +389,7 @@ class Corp(commands.Cog):
                 message[int(i / 10)] += f'I see {member} in that channel, their link is {link}.\n'
             except IndexError:
                 message.append('')
-                message[int(i / 10)] += f'I see {member} in that channel, their link is {link}.'
+                message[int(i / 10)] += f'I see {member} in that channel, their link is {link}.\n'
             i += 1
         for mes in message:
             await ctx.send(mes)
