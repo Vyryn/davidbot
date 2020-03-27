@@ -289,9 +289,9 @@ class Corp(commands.Cog):
             adduser(ctx.author, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
             try:
                 await ctx.author.add_roles(ctx.guild.get_role(corp_tag_id))
-                if visitor_role in ctx.author.roles:
-                    await ctx.author.remove_roles(visitor_role)
-                    await ctx.send(f'Removed {ctx.author}\'s @Visitor role.')
+                if ctx.guild.get_role(visitor_role) in ctx.author.roles:
+                    await ctx.author.remove_roles(ctx.guild.get_role(visitor_role))
+                    await ctx.send(f'Removed {ctx.author}\'s @Visitor role.', delete_after=10)
             except PermissionError:
                 await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                                "and my role is high enough in the role list.")
