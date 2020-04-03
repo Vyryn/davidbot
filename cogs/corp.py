@@ -340,8 +340,8 @@ class Corp(commands.Cog):
         embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
-        await self.bot.get_channel(log_channel).send(f"They had the following feedback:\n```{'' + feedback}```\n"
-                                                     f"Human Resources, please give them a warm welcome in #lobby "
+        await self.bot.get_channel(log_channel).send(f"They had the following feedback:\n```{'' + feedback.content}``"
+                                                     f"`\nHuman Resources, please give them a warm welcome in #lobby "
                                                      f"then mark this post with :corpyes:\n "
                                                      f"{ctx.guild.get_role(recruiter_role).mention()}, please verify "
                                                      f"this user hasn't registered in the past, and use `^remove_corp`"
