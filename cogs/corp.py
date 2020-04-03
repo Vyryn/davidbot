@@ -427,7 +427,7 @@ class Corp(commands.Cog):
         for role in ctx.guild.roles:
             if role.name.casefold() == f'DL {div.casefold()}'.casefold():
                 dl_role = role
-            elif role.name.casefold() == f'DH {divs[div].casefold()}'.casefold():
+            elif role.name.casefold() == f'DH {divs[div.casefold()].casefold()}'.casefold():
                 dh_role = role
         await management.send(f'{dl_role.mention}, {dh_role.mention}, {ctx.author} is interested in joining {div}! '
                               f'Please contact them at your convenience to help them with that.')
