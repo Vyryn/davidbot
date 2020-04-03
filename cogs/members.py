@@ -369,6 +369,7 @@ class Members(commands.Cog):
         If you have multiple DL tags, you may need to specify which division you'd like to check.
         Requires Manager tag to use.
         """
+        print(f'div_membership triggered by {ctx.author} for div {div} at {now()}.')
         # Sanitize div name
         if div is not None:
             div = div_alternative_names.get(div.casefold(), div)
@@ -381,28 +382,33 @@ class Members(commands.Cog):
                 div = str(role).split('DL ')[1]
         if not manager_flag:
             await ctx.send('A manager tag is required to use this command.')
+            print('Not authorized.')
             return
         # Need to do a second loop to find the division of interest
-        div_interest = ctx.guild.get_role('@everyone')
+        div_interest = None
         for role in ctx.guild.roles:
             if str(role).casefold() == div.casefold():
                 div_interest = role
-                return
+                break
+        print(div_interest)
         # Now time for the big check
         member_count = 0
         div_members = []
         for member in ctx.guild.members:
             if div_interest in member.roles:
+                print(member)
                 member_count += 1
                 div_members.append(member)
         # Prepare file
-        upload_file = None
-        with open(f'./memberships/{div}_members.txt', 'w+') as f:
-            upload_file = f
+        upload_file_address = f'./memberships/{div}_members.txt'
+        with open(upload_file_address, 'w+') as f:
             for member in div_members:
-                f.write(member)
+                try:
+                    f.write(f'{str(member)}\n')
+                except UnicodeEncodeError:
+                    f.write(f'A user with non-unicode characters in their name, id: {str(member.id)}\n')
         await ctx.send(f'I found {member_count} members in {div}. Full div membership is in the attached file.',
-                       file=upload_file)
+                       file=discord.File(upload_file_address))
 
 
 def setup(bot):
