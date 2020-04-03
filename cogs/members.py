@@ -7,7 +7,7 @@ from cogs.corp import corp_tag_id, check_ok, check_author, fetch_citizen
 from cogs.database import adduser
 from functions import basicperms, sigperms, deltime, embed_footer, now, log_channel, ping_role, recruiter_role, \
     candidate_role, welcome_david_msg, timeout_msg, help_david_msg, get_a_person, understand_david_msg, hr_reps, \
-    visitor_role, registration_channel, profiles_url
+    visitor_role, registration_channel, profiles_url, div_alternative_names
 
 
 class Members(commands.Cog):
@@ -358,6 +358,51 @@ class Members(commands.Cog):
         else:
             await target.add_roles(the_candidate_role)
             await ctx.send(f'Added {target}\'s @Candidate role.')
+
+    # List all members in divisions you have a DL tag for
+    @commands.command(name='membership', aliases=['divlist'])
+    @commands.guild_only()
+    async def div_membership(self, ctx, div=None):
+        """
+        Lists all members of divisions you have the DL tag for. Future improvements will make DH and Board tags give
+        a variety of parameters.
+        If you have multiple DL tags, you may need to specify which division you'd like to check.
+        Requires Manager tag to use.
+        """
+        # Sanitize div name
+        if div is not None:
+            div = div_alternative_names.get(div.casefold(), div)
+        # Check for authorization and check divisions that are likely to be of interest in one loop
+        manager_flag = False
+        for role in ctx.author.roles:
+            if str(role) == 'Manager':
+                manager_flag = True
+            elif div is None and str(role).startswith('DL '):
+                div = str(role).split('DL ')[1]
+        if not manager_flag:
+            await ctx.send('A manager tag is required to use this command.')
+            return
+        # Need to do a second loop to find the division of interest
+        div_interest = ctx.guild.get_role('@everyone')
+        for role in ctx.guild.roles:
+            if str(role).casefold() == div.casefold():
+                div_interest = role
+                return
+        # Now time for the big check
+        member_count = 0
+        div_members = []
+        for member in ctx.guild.members:
+            if div_interest in member.roles:
+                member_count += 1
+                div_members.append(member)
+        # Prepare file
+        upload_file = None
+        with open(f'./memberships/{div}_members.txt', 'w+') as f:
+            upload_file = f
+            for member in div_members:
+                f.write(member)
+        await ctx.send(f'I found {member_count} members in {div}. Full div membership is in the attached file.',
+                       file=upload_file)
 
 
 def setup(bot):
