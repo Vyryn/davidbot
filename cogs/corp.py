@@ -413,7 +413,7 @@ class Corp(commands.Cog):
             if channel.name.casefold() == div_req_notif_ch.casefold():
                 management = channel
         div = div_alternative_names.get(div.casefold(), div)
-        dept = divs.get(div.casefold(), "none")
+        dept = divs.get(div.casefold(), 'none')
         # If not a valid division
         if dept == 'none':
             await ctx.send(
@@ -425,15 +425,14 @@ class Corp(commands.Cog):
         print(f'{ctx.author} used reqdiv to request to join {div} at {now()}.')
         # Find DH and DL roles
         for role in ctx.guild.roles:
-            if role.name.casefold() == f'DL {div}'.casefold():
+            if role.name.casefold() == f'DL {div.casefold()}'.casefold():
                 dl_role = role
-            elif role.name.casefold() == f'DH {divs[div]}'.casefold():
+            elif role.name.casefold() == f'DH {divs[div].casefold()}'.casefold():
                 dh_role = role
         await management.send(f'{dl_role.mention}, {dh_role.mention}, {ctx.author} is interested in joining {div}! '
                               f'Please contact them at your convenience to help them with that.')
         await ctx.send(f"Okay, I have informed the division leader and department head that you're interested "
-                       f"in joining  {div}.")
-
+                       f"in joining {div}.")
 
     @commands.command(name='adduser', description='Adds a user to the database.')
     @commands.check(auth(1))
