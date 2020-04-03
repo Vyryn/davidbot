@@ -33,6 +33,22 @@ div_req_notif_ch = 'recruitment'
 DEFAULT_RSI_URL = 'https://robertsspaceindustries.com'
 profiles_url = 'https://robertsspaceindustries.com/citizens/'
 
+# Some common aliases for divs
+div_alternative_names = {'space': 'space security', 'ground': 'ground security', 'repossession': 'repo',
+                         'human': 'human resources', 'medical': 'csar', 'exploration': 'cartography',
+                         'military': 'space security', 'bounty hunting': 'repo', 'bounty': 'repo',
+                         'pr': 'media', 'streamer': 'media', 'recruitment': 'human resources'
+                         }
+# div-dept mapping
+divs = {'prospecting': 'exploration', 'cartography': 'exploration', 'research': 'exploration',
+        'contracts': 'business', 'finance': 'business', 'trade': 'business',
+        'space security': 'security', 'ground security': 'security', 'repo': 'security',
+        'development': 'resources', 'transport': 'resources', 'extraction': 'resources',
+        'diplomacy': 'social', 'training': 'social', 'human resources': 'social',
+        'csar': 'support', 'engineering': 'support',
+        'media': 'public relations', 'e-sports': 'public relations'
+        }
+
 # Some registration messages
 timeout_msg = 'You took too long to respond. You will need to start the command over again if you wish to continue' \
               ' your application.'

@@ -5,7 +5,7 @@ from discord.ext import commands
 from cogs.database import adduser, get_rsi
 from functions import now, today, auth, corp_tag_id, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
     timeout_msg, get_a_person, timeout as deltime, hr_reps, get_item, div_req_notif_ch, welcome_david_msg, \
-    understand_david_msg, help_david_msg, recruiter_role, visitor_role
+    understand_david_msg, help_david_msg, recruiter_role, visitor_role, div_alternative_names, divs
 import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
@@ -400,7 +400,7 @@ class Corp(commands.Cog):
             await ctx.send(mes)
 
     @commands.command(name='reqdiv', description='Request a division tag for any division or divisions')
-    async def reqdiv(self, ctx, *, divs):
+    async def reqdiv(self, ctx, *, div):
         """
         Request a division tag for any divs in divs
         """
@@ -408,48 +408,32 @@ class Corp(commands.Cog):
         if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
             await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
             return
-
+        # Find reporting channel
         for channel in ctx.guild.channels:
             if channel.name.casefold() == div_req_notif_ch.casefold():
                 management = channel
-        divs_list = divs.split(' ')
-        print(divs_list)
-        for div in divs_list:
-            print(div)
-            if div.casefold() == 'human':
-                div = 'human resources'
-            elif div.casefold() == 'ground':
-                div = 'ground security'
-            elif div.casefold() == 'space':
-                div = 'space security'
-            elif div.casefold() == 'public':
-                div = 'public relations'
-            for role in ctx.guild.roles:
-                flag = False
-                if role.name.casefold() == f'DL {div}'.casefold():
-                    flag = True
-                    print('found one div!')
-                    await management.send(f'{role.mention}, {ctx.author} is interested in joining {div}! Please contact'
-                                          f' them at your convenience to help them with that.')
-                    await ctx.send(f"Okay, I have informed the division leader that you're interested in joining"
-                                   f" {div}.")
-                    return
-                elif role.name.casefold() == f'DH {div}'.casefold():
-                    flag = True
-                    print('found one dept!')
-                    await management.send(f'{role.mention}, {ctx.author} is interested in joining your department! '
-                                          f'Please contact them at your convenience to help them choose a division and '
-                                          f'join it.')
-                    await ctx.send(f"Hmm, {div} is actually a department rather than a division, a larger structure "
-                                   f"that you can't join directly. However, I've contacted the department head to "
-                                   f"help you out with choosing a division")
-                    return
-            if not flag:
-                await ctx.send(
-                    f"Hmm, I didn't find {div} in our list of divisions. Our divisions are all in the picture"
-                    f" below.\nhttps://cdn.discordapp.com/attachments/420161713795760130/583071185797906432/CORPDe"
-                    f"ptsDivs_revised_c.png")
-                return
+        div = div_alternative_names.get(div.casefold(), div)
+        dept = divs.get(div.casefold(), "none")
+        # If not a valid division
+        if dept == 'none':
+            await ctx.send(
+                f"Hmm, I didn't find {div} in our list of divisions. Note there are 19 divisions, the seven "
+                f"departments (ex. resources) are not directly join-able. Our divisions are all in the picture "
+                f" below.\nhttps://cdn.discordapp.com/attachments/420161713795760130/583071185797906432/CORPDe"
+                f"ptsDivs_revised_c.png")
+            return
+        print(f'{ctx.author} used reqdiv to request to join {div} at {now()}.')
+        # Find DH and DL roles
+        for role in ctx.guild.roles:
+            if role.name.casefold() == f'DL {div}'.casefold():
+                dl_role = role
+            elif role.name.casefold() == f'DH {divs[div]}'.casefold():
+                dh_role = role
+        await management.send(f'{dl_role.mention}, {dh_role.mention}, {ctx.author} is interested in joining {div}! '
+                              f'Please contact them at your convenience to help them with that.')
+        await ctx.send(f"Okay, I have informed the division leader and department head that you're interested "
+                       f"in joining  {div}.")
+
 
     @commands.command(name='adduser', description='Adds a user to the database.')
     @commands.check(auth(1))
