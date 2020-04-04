@@ -340,14 +340,14 @@ class Corp(commands.Cog):
         embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
-        await self.bot.get_channel(log_channel).send(f"They had the following feedback:\n```{'' + feedback.content}``"
+        await self.bot.get_channel(log_channel).send(f"They had the following feedback:\n```{str(feedback.content)}``"
                                                      f"`\nHuman Resources, please give them a warm welcome in #lobby "
                                                      f"then mark this post with :corpyes:\n "
                                                      f"{ctx.guild.get_role(recruiter_role).mention()}, please verify "
                                                      f"this user hasn't registered in the past, and use `^remove_corp`"
                                                      f" if their Corporateer tag needs removing.")
 
-    @commands.command(name='fetch_cit', description='Check citizen\'s rsi profile')
+    @commands.command(name='checkrsi', aliases=['fetch_cit, rsi'], description='Check citizen\'s rsi profile')
     async def fetch_citizen_cmd(self, ctx, user: str):
         """
         Check someone's RSI profile

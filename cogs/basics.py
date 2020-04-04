@@ -176,7 +176,8 @@ class Basics(commands.Cog):
                 1h:   1 hour from now
                 1d: tomorrow at this time
                 1w: next week at this time
-                1y: next year (or probably never, as the bot currently forgets reminders if it restarts)"""
+                1y: next year (or probably never, as the bot currently forgets reminders if it restarts)
+        """
         try:
             print(ctx.message.raw_mentions[0])
             user = ctx.guild.get_member(ctx.message.raw_mentions[0])
@@ -246,6 +247,8 @@ class Basics(commands.Cog):
     # Adds +1 and -1 reactions to your message
     @commands.command(name='yesno', pass_context=True, description='Adds yes and no to your message')
     async def yessno(self, ctx, *, message):
+        """Adds :+1: and :-1: reactions to your message.
+        """
         await ctx.message.add_reaction('\U00010031')
         await ctx.message.add_reaction('\U00010032')
         print(f'Yesno command used by {ctx.author} at {now()} with message {message}.')
