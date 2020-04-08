@@ -287,11 +287,21 @@ class Corp(commands.Cog):
             joined_rsi = citizen['enlisted']
             hr_rep = random.choice(hr_reps)
             adduser(ctx.author, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
+            # Get display name so it can be changed to RSI name.
+            disp = None
+            if ctx.author.nick is not None:
+                disp = ctx.author.nick
+            else:
+                disp = ctx.author.display_name
             try:
                 await ctx.author.add_roles(ctx.guild.get_role(corp_tag_id))
                 if ctx.guild.get_role(visitor_role) in ctx.author.roles:
                     await ctx.author.remove_roles(ctx.guild.get_role(visitor_role))
                     await ctx.send(f'Removed {ctx.author}\'s @Visitor role.', delete_after=10)
+                if disp != handle_e:
+                    await ctx.author.edit(reason='Bot change to match RSI handle', nick=handle_e)
+                    await ctx.send('I have changed your nickname on this server to match your RSI handle so that games'
+                                   ' nights can be done more easily.')
             except PermissionError:
                 await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                                "and my role is high enough in the role list.")
