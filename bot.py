@@ -7,7 +7,7 @@ import sys
 import asyncio
 from discord.ext import commands
 from itertools import cycle
-from functions import statuses, auth, get_prefix, deltime, owner_id
+from functions import statuses, auth, get_prefix, deltime, owner_id, no_command_channels, add_ignored_channel
 from privatevars import TOKEN
 
 bot = commands.Bot(command_prefix=get_prefix)
@@ -109,6 +109,18 @@ async def on_command_error(ctx, error):
         #     # print(f'Error triggered: {error} in command {ctx.command}, {traceback.print_tb(error.__traceback__)}')
         # return
 
+# Global checks
+# Checks if a user has the requested authorization level or not, is a coroutine for async operation
+@bot.check
+def channel_check():
+    async def channel_perm_check(ctx, *args):
+        global no_command_channels
+        for channel in no_command_channels:
+            if int(channel) == ctx.channel.id:
+                return False
+        return True
+
+    return channel_perm_check()
 
 # Commands
 @bot.command(name='load', description='Load a cog')
@@ -121,6 +133,14 @@ async def load(ctx, extension):
     print(f'Loaded {extension}.')
     await ctx.send(f'Loaded {extension}.', delete_after=deltime)
     await ctx.message.delete(delay=deltime)  # delete the command
+
+@bot.command(name='ignorech', description='Make the bot ignore commands in the channel this is used in.')
+@commands.check(auth(4))
+async def ignorech(ctx):
+    ch_id = str(ctx.channel.id)
+    global no_command_channels
+    no_command_channels = add_ignored_channel(ch_id)
+
 
 
 @bot.command(name='restart', description='Restart the bot')
@@ -139,6 +159,7 @@ async def restart(ctx):
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')  # load up each extension
+
 
 # run bot
 bot.run(TOKEN)

@@ -33,11 +33,15 @@ div_req_notif_ch = 'recruitment'
 DEFAULT_RSI_URL = 'https://robertsspaceindustries.com'
 profiles_url = 'https://robertsspaceindustries.com/citizens/'
 
+# No command channels: A list of channels the bot will not respond to messages in.
+no_command_channels = []
+
 # Some common aliases for divs
 div_alternative_names = {'space': 'space security', 'ground': 'ground security', 'repossession': 'repo',
                          'human': 'human resources', 'medical': 'csar', 'exploration': 'cartography',
                          'military': 'space security', 'bounty hunting': 'repo', 'bounty': 'repo',
-                         'pr': 'media', 'streamer': 'media', 'recruitment': 'human resources'
+                         'pr': 'media', 'streamer': 'media', 'recruitment': 'human resources',
+                         'extractions': 'extraction'
                          }
 # div-dept mapping
 divs = {'prospecting': 'exploration', 'cartography': 'exploration', 'research': 'exploration',
@@ -114,6 +118,13 @@ def set_commanders():
     return
 
 
+def add_ignored_channel(channel_id):
+    global no_command_channels
+    no_command_channels.append(str(channel_id))
+    write_json_var('ignored_channels', no_command_channels)
+    return no_command_channels
+
+
 # Return the bot_commanders dict
 def get_commanders():
     global bot_commanders
@@ -178,8 +189,22 @@ def auth(level):
     return user_auth_check
 
 
+# Checks if a user has the requested authorization level or not, is a coroutine for async operation
+def channel_check(level):
+    async def channel_perm_check(ctx, *args):
+        for channel in no_command_channels:
+            if int(channel) == ctx.channel.id:
+                return True
+        return False
+
+    return channel_perm_check()
+
+
 # Returns the bot prefix for the guild the message is within, or the global default prefix
 def get_prefix(bot, message):
+    global no_command_channels
+    with open('ignored_channels.json', 'r') as f:
+        no_command_channels = json.load(f)
     # outside a guild
     if not message.guild:
         return global_prefix
