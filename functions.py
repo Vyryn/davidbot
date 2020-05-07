@@ -33,6 +33,9 @@ div_req_notif_ch = 'recruitment'
 DEFAULT_RSI_URL = 'https://robertsspaceindustries.com'
 profiles_url = 'https://robertsspaceindustries.com/citizens/'
 
+# The URL for the divison information picture
+div_pic = "https://cdn.discordapp.com/attachments/229700730611564545/707964562472697906/CORPDeptsDivs_revised_c.png"
+
 # No command channels: A list of channels the bot will not respond to messages in.
 no_command_channels = []
 
@@ -120,8 +123,10 @@ def set_commanders():
 
 def add_ignored_channel(channel_id):
     global no_command_channels
+    print(no_command_channels)
     no_command_channels.append(str(channel_id))
     write_json_var('ignored_channels', no_command_channels)
+    print(no_command_channels)
     return no_command_channels
 
 
@@ -190,8 +195,8 @@ def auth(level):
 
 
 # Checks if a user has the requested authorization level or not, is a coroutine for async operation
-def channel_check(level):
-    async def channel_perm_check(ctx, *args):
+def channel_check(ctx):
+    async def channel_perm_check(*args):
         for channel in no_command_channels:
             if int(channel) == ctx.channel.id:
                 return True

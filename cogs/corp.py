@@ -429,10 +429,8 @@ class Corp(commands.Cog):
         # If not a valid division
         if dept == 'none':
             await ctx.send(
-                f"Hmm, I didn't find {div} in our list of divisions. Note there are 19 divisions, the seven "
-                f"departments (ex. resources) are not directly join-able. Our divisions are all in the picture "
-                f" below.\nhttps://cdn.discordapp.com/attachments/420161713795760130/583071185797906432/CORPDe"
-                f"ptsDivs_revised_c.png")
+                f"Hmm, I didn't find {div} in our list of divisions. Our divisions are all in the picture below.\n"
+                f"{div_pic}")
             return
         print(f'{ctx.author} used reqdiv to request to join {div} at {now()}.')
         # Find DH and DL roles

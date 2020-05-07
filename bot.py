@@ -50,7 +50,9 @@ async def on_command_error(ctx, error):
         return print(f'{ctx.author} tried to use {ctx.command} without sufficient permissions.')
     elif isinstance(error, commands.CheckFailure):
         try:
-            await ctx.send(f'{ctx.author}, you are not authorized to perform this command.', delete_after=deltime)
+            await ctx.send(f'{ctx.author}, you are not authorized to perform this command in this channel. If you '
+                           f'think this is a mistake, try using the command in #self-registration or '
+                           f'#bot-control-room.', delete_after=deltime)
         except:
             pass
         return print(f'{ctx.author} tried to use {ctx.command} without sufficient auth level.')
@@ -112,8 +114,8 @@ async def on_command_error(ctx, error):
 # Global checks
 # Checks if a user has the requested authorization level or not, is a coroutine for async operation
 @bot.check
-def channel_check():
-    async def channel_perm_check(ctx, *args):
+def channel_check(ctx):
+    async def channel_perm_check(*args):
         global no_command_channels
         for channel in no_command_channels:
             if int(channel) == ctx.channel.id:
@@ -140,6 +142,7 @@ async def ignorech(ctx):
     ch_id = str(ctx.channel.id)
     global no_command_channels
     no_command_channels = add_ignored_channel(ch_id)
+    await ctx.send("Adding channel to ignore list.", delete_after=deltime)
 
 
 
