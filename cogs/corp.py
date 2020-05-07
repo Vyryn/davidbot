@@ -5,7 +5,7 @@ from discord.ext import commands
 from cogs.database import adduser, get_rsi
 from functions import now, today, auth, corp_tag_id, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
     timeout_msg, get_a_person, timeout as deltime, hr_reps, get_item, div_req_notif_ch, welcome_david_msg, \
-    understand_david_msg, help_david_msg, recruiter_role, visitor_role, div_alternative_names, divs
+    understand_david_msg, help_david_msg, recruiter_role, visitor_role, div_alternative_names, divs, div_pic
 import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
