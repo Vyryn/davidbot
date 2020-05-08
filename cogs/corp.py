@@ -438,12 +438,18 @@ class Corp(commands.Cog):
             await ctx.send('It looks like you may have misspelled that channel name. Try again.')
             return
         divs_in_channel = Counter()
-        global divs
         for member in channel.members:
             for div in member.roles:
-                if div in divs:
-                    divs_in_channel[div] += 1
-        await ctx.send(f'I found the following divs:\n{divs_in_channel.most_common(5)}')
+                if div.name.casefold() in divs.keys():
+                    divs_in_channel[div.name] += 1
+        print(divs_in_channel)
+        print((divs_in_channel.most_common(10)))
+        message = ''
+        counter = 0
+        for div in divs_in_channel.most_common(10):
+            counter += 1
+            message += f'{counter})  {div[1]} x {div[0]}\n'
+        await ctx.send(f'I found the following divs:\n{message}')
 
 
     @commands.command(name='reqdiv', description='Request a division tag for any division or divisions')
