@@ -414,10 +414,12 @@ class Corp(commands.Cog):
             await ctx.send(mes)
 
     @commands.command(name='listdivs', description='List all the divisons of members in your voice channel or target voice channel.')
-    async def list_divs(self, ctx, *, channel=None):
+    async def list_divs(self, ctx, num=0, *, channel=None):
         """
-        Print a list of the division tags of everyone in the selected voice channel.
+        Print a list of the division tags of everyone in the selected voice channel. Add a number to list the top that many, defaults to 10.
         """
+        if num < 1:
+            num = 10
         if channel is None:
             if ctx.author.voice is None or ctx.author.voice.channel is None:
                 await ctx.send(f"{ctx.author}, you aren't currently in a voice channel. Either join one or specify "
@@ -443,10 +445,10 @@ class Corp(commands.Cog):
                 if div.name.casefold() in divs.keys():
                     divs_in_channel[div.name] += 1
         print(divs_in_channel)
-        print((divs_in_channel.most_common(10)))
+        print((divs_in_channel.most_common(num)))
         message = ''
         counter = 0
-        for div in divs_in_channel.most_common(10):
+        for div in divs_in_channel.most_common(num):
             counter += 1
             message += f'{counter})  {div[1]} x {div[0]}\n'
         await ctx.send(f'I found the following divs:\n{message}')
