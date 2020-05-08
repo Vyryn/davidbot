@@ -1,4 +1,6 @@
 import random
+from collections import Counter
+
 import aiohttp
 import discord
 from discord.ext import commands
@@ -410,6 +412,39 @@ class Corp(commands.Cog):
             i += 1
         for mes in message:
             await ctx.send(mes)
+
+    @commands.command(name='listdivs', description='List all the divisons of members in your voice channel or target voice channel.')
+    async def list_divs(self, ctx, *, channel=None):
+        """
+        Print a list of the division tags of everyone in the selected voice channel.
+        """
+        if channel is None:
+            if ctx.author.voice is None or ctx.author.voice.channel is None:
+                await ctx.send(f"{ctx.author}, you aren't currently in a voice channel. Either join one or specify "
+                               f"one with the command.")
+                return
+            else:
+                channel = ctx.author.voice.channel
+        else:
+            for try_channel in ctx.guild.voice_channels:
+                if try_channel.name.casefold() == channel.casefold():
+                    channel = try_channel
+                    break
+        try:
+            if len(channel.members) < 1:
+                await ctx.send(f'I see no one in that channel.')
+                return
+        except AttributeError:
+            await ctx.send('It looks like you may have misspelled that channel name. Try again.')
+            return
+        divs_in_channel = Counter()
+        global divs
+        for member in channel.members:
+            for div in member.roles:
+                if div in divs:
+                    divs_in_channel[div] += 1
+        await ctx.send(f'I found the following divs:\n{divs_in_channel.most_common(5)}')
+
 
     @commands.command(name='reqdiv', description='Request a division tag for any division or divisions')
     async def reqdiv(self, ctx, *, div):
