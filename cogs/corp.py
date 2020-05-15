@@ -1,3 +1,4 @@
+import asyncio
 import random
 from collections import Counter
 
@@ -135,7 +136,7 @@ class Corp(commands.Cog):
         await ctx.send(welcome_david_msg.format(author=ctx.author.mention))
         try:
             response = await self.bot.wait_for('message', check=check_ok(ctx.author), timeout=deltime)
-        except TimeoutError:
+        except asyncio.TimeoutError:
             await ctx.send(timeout_msg)
             return
         if response.content.casefold() == 'help'.casefold():
@@ -150,7 +151,7 @@ class Corp(commands.Cog):
                 content=understand_david_msg)
             try:
                 rsi_handle = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
-            except TimeoutError:
+            except asyncio.TimeoutError:
                 await ctx.send(timeout_msg)
                 return
             if response.content.casefold() == 'help'.casefold():
@@ -171,7 +172,7 @@ class Corp(commands.Cog):
                 await ctx.send("When you're ready, please post your RSI handle here.")
                 try:
                     rsi_handle = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
-                except TimeoutError:
+                except asyncio.TimeoutError:
                     await ctx.send(timeout_msg)
                     return
                 if rsi_handle.content.casefold() == 'help'.casefold():
@@ -188,7 +189,7 @@ class Corp(commands.Cog):
                                f"**__Confirm with__** \n```\nok```\n, or type it again if you made a mistake.")
                 try:
                     response = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
-                except TimeoutError:
+                except asyncio.TimeoutError:
                     await ctx.send(timeout_msg)
                     return
                 if response.content.casefold() == 'help'.casefold():
@@ -212,7 +213,7 @@ class Corp(commands.Cog):
                     f"if you're not sure how to do that, **__type__** `how`.")
         try:
             response = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
-        except TimeoutError:
+        except asyncio.TimeoutError:
             await ctx.send(timeout_msg)
             return
         if response.content.casefold() == 'help'.casefold():
@@ -230,7 +231,7 @@ class Corp(commands.Cog):
                 file=discord.File('rsi_register_helper_image_2.png'))
             try:
                 ok_check = await self.bot.wait_for('message', check=check_ok(ctx.author), timeout=deltime)
-            except TimeoutError:
+            except asyncio.TimeoutError:
                 await ctx.send(timeout_msg)
                 return
         await ctx.send(f"Checking your RSI profile...")
@@ -317,7 +318,7 @@ class Corp(commands.Cog):
         await ctx.send(message)
         try:
             feedback = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
-        except TimeoutError:
+        except asyncio.TimeoutError:
             pass
         if not ready:
             return
