@@ -62,7 +62,7 @@ async def on_command_error(ctx, error):
         except:
             pass
         return print(f'{ctx.author} tried to use {ctx.command} but got a JSONDecodeError.')
-    elif isinstance(error, TimeoutError):
+    elif isinstance(error, asyncio.TimeoutError):
         try:
             await ctx.send(f"{ctx.author}, you took too long. Please re-run the command to continue"
                            f" when you're ready.", delete_after=deltime)

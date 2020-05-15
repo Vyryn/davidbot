@@ -37,10 +37,11 @@ class Members(commands.Cog):
     @commands.guild_only()
     async def on_member_remove(self, member: discord.Member):
         if member.guild.get_role(corp_tag_id) in member.roles:
-            embed = discord.Embed(title='', description='', color=discord.Color.gold())
+            the_ping_role = member.guild.get_role(ping_role)
+            embed = discord.Embed(title='', description='', color=discord.Color.red())
             embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.id}')
             embed.set_footer(text=f'Corporateer Left • {now()}')
-            await member.guild.get_channel(log_channel).send('@here', embed=embed)
+            await member.guild.get_channel(log_channel).send(f'{the_ping_role.mention}', embed=embed)
             print(f'{member.display_name} ({member.mention}) has left {member.guild}.')
         else:
             embed = discord.Embed(title='', description='', color=discord.Color.gold())
