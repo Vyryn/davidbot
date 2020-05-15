@@ -121,20 +121,16 @@ def set_commanders():
     return
 
 
+def get_ignored_channels():
+    global no_command_channels
+    return no_command_channels
+
+
 # Update the memory ignored_channels list by reading from file
 def set_ignored_channels():
     global no_command_channels
     no_command_channels = load_json_var('ignored_channels')
     return
-
-
-def add_ignored_channel(channel_id):
-    global no_command_channels
-    print(no_command_channels)
-    no_command_channels.append(str(channel_id))
-    write_json_var('ignored_channels', no_command_channels)
-    print(no_command_channels)
-    return no_command_channels
 
 
 # Return the bot_commanders dict

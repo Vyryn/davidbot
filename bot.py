@@ -1,3 +1,4 @@
+import json
 from json import JSONDecodeError
 import traceback
 import discord
@@ -7,11 +8,10 @@ import sys
 import asyncio
 from discord.ext import commands
 from itertools import cycle
-from functions import statuses, auth, get_prefix, deltime, owner_id, no_command_channels, add_ignored_channel
+from functions import statuses, auth, get_prefix, deltime, owner_id, get_ignored_channels, set_ignored_channels
 from privatevars import TOKEN
 
 bot = commands.Bot(command_prefix=get_prefix)
-
 
 # Events
 @bot.event
@@ -115,10 +115,10 @@ async def on_command_error(ctx, error):
 
 # Global checks
 # Checks if a user has the requested authorization level or not, is a coroutine for async operation
-@bot.check
+@bot.check_once
 def channel_check(ctx):
     async def channel_perm_check(*args):
-        global no_command_channels
+        no_command_channels = get_ignored_channels()
         for channel in no_command_channels:
             if int(channel) == ctx.channel.id:
                 return False
@@ -144,9 +144,13 @@ async def load(ctx, extension):
 @commands.check(auth(4))
 async def ignorech(ctx):
     ch_id = str(ctx.channel.id)
-    global no_command_channels
-    no_command_channels = add_ignored_channel(ch_id)
+    no_command_channels = get_ignored_channels()
+    no_command_channels.append(ch_id)
+    with open('ignored_channels.json', 'w') as f:
+        json.dump(no_command_channels, f, indent=4)
+    set_ignored_channels()
     await ctx.send("Adding channel to ignore list.", delete_after=deltime)
+
 
 
 @bot.command(name='restart', description='Restart the bot')

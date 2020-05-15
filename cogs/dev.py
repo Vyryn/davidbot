@@ -31,7 +31,6 @@ class Dev(commands.Cog):
 
     def __init__(self, bot):
         set_commanders()
-        set_ignored_channels()
         self.bot = bot
 
     # Events
