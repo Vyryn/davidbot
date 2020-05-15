@@ -5,7 +5,8 @@ import json
 import ast
 from discord import File
 from discord.ext import commands
-from functions import auth, default_auth, set_commanders, get_commanders, perms_info, deltime, embed_footer, now
+from functions import auth, default_auth, set_commanders, get_commanders, perms_info, deltime, embed_footer, now, \
+    set_ignored_channels
 
 
 def insert_returns(body):
@@ -30,6 +31,7 @@ class Dev(commands.Cog):
 
     def __init__(self, bot):
         set_commanders()
+        set_ignored_channels()
         self.bot = bot
 
     # Events

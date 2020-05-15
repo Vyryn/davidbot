@@ -80,15 +80,16 @@ async def on_command_error(ctx, error):
         traceback_text += ''.join(lines)
         traceback_text += '\n```'
         try:
-            await ctx.send(f"Hmm, something went wrong with {ctx.command}. I have let the developer know, and they will take a look.")
-            await bot.get_user(owner_id).send(f'Hey Vyryn, there was an error in the command {ctx.command}: {error}.\n It was used by {ctx.author} in {ctx.guild}, {ctx.channel}.')
+            await ctx.send(
+                f"Hmm, something went wrong with {ctx.command}. I have let the developer know, and they will take a look.")
+            await bot.get_user(owner_id).send(
+                f'Hey Vyryn, there was an error in the command {ctx.command}: {error}.\n It was used by {ctx.author} in {ctx.guild}, {ctx.channel}.')
             await bot.get_user(owner_id).send(traceback_text)
         except:
             print(f"I was unable to send the error log for debugging.")
         print(traceback_text)
         # print(f'Error triggered: {error} in command {ctx.command}, {traceback.print_tb(error.__traceback__)}')
         return
-
 
         #
         # # get data from exception
@@ -111,6 +112,7 @@ async def on_command_error(ctx, error):
         #     # print(f'Error triggered: {error} in command {ctx.command}, {traceback.print_tb(error.__traceback__)}')
         # return
 
+
 # Global checks
 # Checks if a user has the requested authorization level or not, is a coroutine for async operation
 @bot.check
@@ -124,6 +126,7 @@ def channel_check(ctx):
 
     return channel_perm_check()
 
+
 # Commands
 @bot.command(name='load', description='Load a cog')
 @commands.check(auth(4))
@@ -136,6 +139,7 @@ async def load(ctx, extension):
     await ctx.send(f'Loaded {extension}.', delete_after=deltime)
     await ctx.message.delete(delay=deltime)  # delete the command
 
+
 @bot.command(name='ignorech', description='Make the bot ignore commands in the channel this is used in.')
 @commands.check(auth(4))
 async def ignorech(ctx):
@@ -143,7 +147,6 @@ async def ignorech(ctx):
     global no_command_channels
     no_command_channels = add_ignored_channel(ch_id)
     await ctx.send("Adding channel to ignore list.", delete_after=deltime)
-
 
 
 @bot.command(name='restart', description='Restart the bot')
@@ -158,11 +161,11 @@ async def restart(ctx):
             bot.unload_extension(f'cogs.{filename[:-3]}')  # unload each extension gracefully before restart
     os.execv(sys.executable, ['python'] + sys.argv)
 
+
 # load all cogs in cogs folder at launch
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')  # load up each extension
-
 
 # run bot
 bot.run(TOKEN)
