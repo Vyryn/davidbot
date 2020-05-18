@@ -66,7 +66,6 @@ class Influence(commands.Cog):
         print(presentation)
         await ctx.send(presentation)
 
-
     @commands.command(name='top', description='See the top Influence hoarders.')
     @commands.guild_only()
     @commands.check(auth(2))
@@ -121,14 +120,16 @@ class Influence(commands.Cog):
             name = ctx.author.name
         p_o_e = people.get(name, '-1')
         if p_o_e == '-1':
-            await ctx.send("Sorry, I couldn't find you in the influence system. Make sure you're registered with "
-                           "`~influence login` and that your username is exactly the same as your discord nickname.")
+            await ctx.author.send("Sorry, I couldn't find you in the influence system. Make sure you're registered with"
+                                  " `~influence login` in the #bot-control-room and that your username is exactly the"
+                                  " same as your discord nickname.")
             return
 
-        await ctx.send(f'{name}, your liftime influence is {p_o_e[2]} and your current influence balance '
-                       f'is {p_o_e[1]}. Keep sending all your tributes to others every week to rise in the ranks. '
-                       f'Send to people you regularly play with or find helpful to help them rise in the ranks as '
-                       f'well. Remember, if you don\'t send all your tributes every week, most of it will be lost.')
+        await ctx.author.send(f'{name}, your liftime influence is {p_o_e[2]} and your current influence balance '
+                              f'is {p_o_e[1]}. Keep sending all your tributes to others every week to rise in the'
+                              f' ranks. Send to people you regularly play with or find helpful to help them rise '
+                              f'in the ranks as well. Remember, if you don\'t send all your tributes every week, '
+                              f'most of it will be lost.')
 
 
 def setup(bot):
