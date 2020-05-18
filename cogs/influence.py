@@ -98,7 +98,7 @@ class Influence(commands.Cog):
             if i > amount_to_return:
                 break
             presentation += f'{i}) {user[0]}\n'
-        presentation = 'Climb to the top of the Corporate Ladder by sending all your tributes every week!\n'
+        presentation += 'Climb to the top of the Corporate Ladder by sending all your tributes every week!\n'
         print(presentation)
         await ctx.send(presentation)
 
