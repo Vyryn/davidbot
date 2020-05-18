@@ -363,13 +363,19 @@ class Corp(commands.Cog):
                                                      f" if their Corporateer tag needs removing.")
 
     @commands.command(name='checkrsi', aliases=['fetch_cit, rsi'], description='Check citizen\'s rsi profile')
-    async def fetch_citizen_cmd(self, ctx, user: str):
+    async def fetch_citizen_cmd(self, ctx, user):
         """
         Check someone's RSI profile
         """
-        citizen = fetch_citizen(user)
+        if isinstance(user, discord.User):
+            name = user.name
+            if user.nick is not None:
+                name = user.nick
+        else:
+            name = user
+        citizen = fetch_citizen(name)
         print(citizen)
-        await ctx.send(citizen['bio'])
+        await ctx.send(f'{DEFAULT_RSI_URL}/citizens/{name}')
         pass
 
     @commands.command(name='listlinks', description='List all the RSI links for everyone in your voice chat.')
