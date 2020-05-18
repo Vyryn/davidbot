@@ -367,14 +367,14 @@ class Corp(commands.Cog):
         """
         Check someone's RSI profile
         """
-        if isinstance(user, discord.User):
+        if isinstance(user, discord.User) or isinstance(user, discord.Member):
             name = user.name
             if user.nick is not None:
                 name = user.nick
         else:
             name = user
-        citizen = fetch_citizen(name)
-        print(citizen)
+        # citizen = fetch_citizen(name)
+        # print(citizen)
         await ctx.send(f'{DEFAULT_RSI_URL}/citizens/{name}')
         pass
 
