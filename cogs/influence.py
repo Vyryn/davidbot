@@ -71,6 +71,10 @@ class Influence(commands.Cog):
     @commands.guild_only()
     @commands.check(auth(2))
     async def top(self, ctx, amount_to_return=5):
+        if amount_to_return < 0:
+            amount_to_return = 5
+        if amount_to_return > 20:
+            amount_to_return = 20
         # Query Zollak's database for updated data
         total_inf_dict = {}
         lifetime_inf_dict = {}
