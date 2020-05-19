@@ -36,8 +36,10 @@ class Influence(commands.Cog):
 
     @commands.command(name='infranks', description='See the distribution of influence system ranks.')
     @commands.guild_only()
-    @commands.check(auth(2))
     async def infranks(self, ctx):
+        """
+        Shows where you stack up in the Influence System ranks.
+        """
         query = query_corporateers()
 
         # Rank Statistics
@@ -68,8 +70,10 @@ class Influence(commands.Cog):
 
     @commands.command(name='top', description='See the top Influence hoarders.')
     @commands.guild_only()
-    @commands.check(auth(2))
     async def top(self, ctx, amount_to_return=5):
+        """
+        Lists the top influence hoarders ;)
+        """
         if amount_to_return < 0:
             amount_to_return = 5
         if amount_to_return > 20:
@@ -107,8 +111,10 @@ class Influence(commands.Cog):
 
     @commands.command(name='checkinf', description='See how much Influence you have.')
     @commands.guild_only()
-    @commands.check(auth(2))
     async def checkinf(self, ctx):
+        """
+        Have the bot send you a private message with how much influence you have.
+        """
         query = query_corporateers()
         people = {}
         for person in query:
