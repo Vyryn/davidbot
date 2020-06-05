@@ -19,12 +19,9 @@ async def remind_routine(increments, user, author, message):
     print(f'{user} has been sent their reminder {message}')
 
 
-class Basics(commands.Cog):
+class Events(commands.Cog):
 
     def __init__(self, bot):
-        set_polls()
-        # Save the auth and polls variables to file every 5 minutes
-        # self.bg_task = self.bot.loop.create_task((300, reminder))
         self.bot = bot
 
     # Events
@@ -166,11 +163,11 @@ class Basics(commands.Cog):
                       description='Send reminders!')
     async def remind(self, ctx, *, reminder=None):
         """Reminds you what you tell it to.
-                Example: remind Tell @neotheone he's a joker in 10m
+                Example: ,remind Tell @neotheone he's a joker in 10m
                 Your reminder needs to end with in and then the amount of time you want to be reminded in.
-                New! Now you can also remind you're a joke in 10m @neotheone     to send him the reminder directly.
+                New! Now you can also ,remind you're a joke in 10m @neotheone     to send him the reminder directly.
                 Please note that abuse of reminding other people **will** result in your perms being edited so that you
-                can't use the remind command at all.
+                can't use the ,remind command at all.
                 10s: 10 seconds from now
                 10m: 10 minutes from now
                 1h:   1 hour from now

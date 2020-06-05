@@ -69,11 +69,11 @@ class Dev(commands.Cog):
     @commands.group(name='auth', aliases=['who', 'check', 'authorize'], description='Check the Auth Level of a user')
     @commands.check(auth(1))
     async def autho(self, ctx):
-        """/auth check returns the auth level of a given user
+        """auth check returns the auth level of a given user
                         Requires: Auth level 1
                         Member: The discord member to check the auth level of
-                        You can use /auth set <user> <level> if you have auth level 7"""
-        # await ctx.send('Use /auth check, /auth set or /auth all')
+                        You can use auth set <user> <level> if you have auth level 7"""
+        # await ctx.send('Use auth check, auth set or auth all')
         print(f'Auth command used by {ctx.author} at {now()}')
         pass
 

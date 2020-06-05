@@ -362,6 +362,103 @@ class Corp(commands.Cog):
                                                      f"this user hasn't registered in the past, and use `^remove_corp`"
                                                      f" if their Corporateer tag needs removing.")
 
+    @commands.command(name='verify', description='Verify someone\'s registration!')
+    async def corp_register(self, ctx, member: discord.Member, *, handle_e=None):
+        """
+        Verify someone's Corporateer registration.
+        Usage: verify [@mention or id] [rsi handle]
+        If and only if discord username is exactly RSI handle, can omit RSI handle here.
+        """
+        # If already registered, don't let them register again
+        if ctx.guild.get_role(667268366456717332) in member.roles or ctx.guild.get_role(
+                corp_tag_id) in member.roles:
+            await ctx.send('User already has Corporateer tag. Proceeding anyways.')
+            # return  #  Commented out due to proceeding anyways. Likely temporary.
+        # Assume RSI handle is discord nick or username if there is none
+        if handle_e is None:
+            if member.nick is not None:
+                handle_e = member.nick
+            else:
+                handle_e = member.display_name
+        await ctx.send(f"Checking their RSI profile...")
+        citizen = fetch_citizen(handle_e)
+        print(citizen)
+        # await ctx.send("Here's what I found.")
+        message = ""
+        ready = False
+        # Verify user is meaningful
+        try:
+            bio = citizen['bio']
+        except KeyError:
+            await ctx.send("Unable to find user profile.")
+            return
+        orgnames = [i['name'] for i in citizen['orgs']]
+        # Verify user is correct user
+        if not citizen['handle'].casefold() == handle_e.casefold():
+            return await ctx.send("Profile not found.")
+        # Verify user in org
+        if 'The Corporation' not in orgnames:
+            return await ctx.send("User not in The Corporation.")
+        # Verify phrase in user bio
+        if f'I am {member}' not in citizen['bio']:
+            return await ctx.send(f"'I am {member} on Discord' not found in user bio.")
+        await ctx.send("User in The Corporation. Phrase found in bio. Attempting to add Corporateer tag.")
+        # Complete paperwork
+        hr_rep = ctx.author.display_name
+        joined = now()
+        rsi_number = citizen['citizen_record']
+        languages = citizen.get('languages', '')
+        location = citizen.get('location', '')
+        joined_rsi = citizen['enlisted']
+        hr_rep = random.choice(hr_reps)
+        adduser(member, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
+        # Get display name so it can be changed to RSI name.
+        disp = None
+        if member.nick is not None:
+            disp = member.nick
+        else:
+            disp = member.display_name
+        try:
+            # Add Corporateer tag
+            if ctx.guild.get_role(corp_tag_id) not in member.roles:
+                await member.add_roles(ctx.guild.get_role(corp_tag_id))
+            # Remove Visitor tag
+            if ctx.guild.get_role(visitor_role) in member.roles:
+                await member.remove_roles(ctx.guild.get_role(visitor_role))
+            if disp != handle_e:
+                await member.edit(reason='Bot change to match RSI handle', nick=handle_e)
+                await ctx.send(f"{member}'s nickname changed to match their RSI handle.")
+        except PermissionError:
+            await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
+                           "and my role is high enough in the role list.")
+        # Send success info
+        await ctx.send(
+            content=f"User {handle_e} successfully added. HR rep is `{hr_rep}`. New members guide attached. Next steps"
+                    f" are:\n join 2 or more divisions with `^reqdiv`, join the influence system with "
+                    f"`~influence login` (note website MOTHER provides is out of date, use"
+                    f" https://influence.thecorporateer.com instead), attend weekly meetings, join us on the forums"
+                    f" with the username and password pinned in #announcements, perhaps sign up for M1 with"
+                    f" `^trainme`, and of course join us ingame :)",
+            file=discord.File('New_Members_Guide_V2.1.pdf'))
+
+        # Log for HR/bookkeeping
+        await self.bot.get_channel(registration_channel).send(
+            f"**{member.mention}** has successfully become a Corporateer at {now()}. Their RSI link is:\n"
+            f"```{profiles_url + handle_e}```")
+        embed = discord.Embed(title='New Corporateer!', description='', color=member.color)
+        embed.add_field(name="User:", value=member.mention, inline=False)
+        embed.add_field(name="Citizen Number #", value=citizen['citizen_record'], inline=False)
+        embed.add_field(name="RSI URL:", value=profiles_url + handle_e.content, inline=False)
+        embed.add_field(name="Languages:", value=f"{citizen['languages']}.", inline=False)
+        embed.add_field(name="Location:", value=f"{citizen['location']}.", inline=False)
+        embed.add_field(name="Joined CORP:", value=joined, inline=False)
+        embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
+        embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
+        app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
+        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention}, please verify "
+                                                     f"this user hasn't registered in the past, and use `^remove_corp`"
+                                                     f" if their Corporateer tag needs removing.")
+
     @commands.command(name='checkrsi', aliases=['fetch_cit, rsi'], description='Check citizen\'s rsi profile')
     async def fetch_citizen_cmd(self, ctx, user):
         """
@@ -419,7 +516,8 @@ class Corp(commands.Cog):
         for mes in message:
             await ctx.send(mes)
 
-    @commands.command(name='listdivs', description='List all the divisons of members in your voice channel or target voice channel.')
+    @commands.command(name='listdivs',
+                      description='List all the divisons of members in your voice channel or target voice channel.')
     async def list_divs(self, ctx, num=0, *, channel=None):
         """
         Print a list of the division tags of everyone in the selected voice channel. Add a number to list the top that many, defaults to 10.
@@ -458,7 +556,6 @@ class Corp(commands.Cog):
             counter += 1
             message += f'{counter})  {div[1]} x {div[0]}\n'
         await ctx.send(f'I found the following divs:\n{message}')
-
 
     @commands.command(name='reqdiv', description='Request a division tag for any division or divisions')
     async def reqdiv(self, ctx, *, div):
