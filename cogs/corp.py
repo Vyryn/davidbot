@@ -308,12 +308,10 @@ class Corp(commands.Cog):
             except PermissionError:
                 await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                                "and my role is high enough in the role list.")
+                return
         else:
             await ctx.send(f"I'm sorry you weren't able to complete the process this time. When you're ready to try" \
                            f" again, use `^register` again.")
-            return
-        await ctx.send(message)
-        if not ready:
             return
         await ctx.send(
             content=f"Welcome! Enjoy your time here at Corp. Your HR rep is `{hr_rep}`. If you"
@@ -341,13 +339,12 @@ class Corp(commands.Cog):
         embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
-        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention}, please give them "
-                                                     f"a warm welcome in #lobby and verify this user hasn't already"
-                                                     f"registered in the past then mark this post with :corpeyes:\n"
-                                                     f"Remember the Human Touch!")
+        # str(feedback.content)
+        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention} please give them"
+                                                     f" a warm welcome in #lobby then mark this post with :corpyes:")
 
     @commands.command(name='verify', description='Verify someone\'s registration!')
-    async def corp_register(self, ctx, member: discord.Member, *, handle_e=None):
+    async def corp_verify(self, ctx, member: discord.Member, *, handle_e=None):
         """
         Verify someone's Corporateer registration.
         Usage: verify [@mention or id] [rsi handle]
@@ -442,8 +439,8 @@ class Corp(commands.Cog):
         embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
-        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention}, "
-                                                     f"please say hello!")
+        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention}, please say "
+                                                     f"hello!")
 
     @commands.command(name='checkrsi', aliases=['fetch_cit, rsi'], description='Check citizen\'s rsi profile')
     async def fetch_citizen_cmd(self, ctx, user):
