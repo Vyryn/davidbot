@@ -308,24 +308,12 @@ class Corp(commands.Cog):
             except PermissionError:
                 await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                                "and my role is high enough in the role list.")
-            message = f"\n\nNearly done... I hope you enjoyed this process. If you have any **__feedback__** for the" \
-                      f" HR team, type it now and I'll convey it. Otherwise, you can just type `ok` or `no` to finish" \
-                      f" up."
         else:
             await ctx.send(f"I'm sorry you weren't able to complete the process this time. When you're ready to try" \
                            f" again, use `^register` again.")
             return
         await ctx.send(message)
-        try:
-            feedback = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
-        except asyncio.TimeoutError:
-            pass
         if not ready:
-            return
-        if feedback.content.casefold() == 'help'.casefold():
-            await ctx.guild.get_channel(log_channel).send(f'@Recruiter, {ctx.author} has requested a personal touch '
-                                                          f'for assistance with their application.')
-            await ctx.send(get_a_person)
             return
         await ctx.send(
             content=f"Welcome! Enjoy your time here at Corp. Your HR rep is `{hr_rep}`. If you"
@@ -353,14 +341,10 @@ class Corp(commands.Cog):
         embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
-        # str(feedback.content)
-        await self.bot.get_channel(log_channel).send(f"They had the following feedback:\n```"
-                                                     f"{feedback.content}```"
-                                                     f"\nHuman Resources, please give them a warm welcome in #lobby "
-                                                     f"then mark this post with :corpyes:\n "
-                                                     f"{ctx.guild.get_role(recruiter_role).mention}, please verify "
-                                                     f"this user hasn't registered in the past, and use `^remove_corp`"
-                                                     f" if their Corporateer tag needs removing.")
+        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention}, please give them "
+                                                     f"a warm welcome in #lobby and verify this user hasn't already"
+                                                     f"registered in the past then mark this post with :corpeyes:\n"
+                                                     f"Remember the Human Touch!")
 
     @commands.command(name='verify', description='Verify someone\'s registration!')
     async def corp_register(self, ctx, member: discord.Member, *, handle_e=None):
@@ -433,31 +417,33 @@ class Corp(commands.Cog):
                            "and my role is high enough in the role list.")
         # Send success info
         await ctx.send(
-            content=f"User {handle_e} successfully added. HR rep is `{hr_rep}`. New members guide attached. Next steps"
-                    f" are:\n join 2 or more divisions with `^reqdiv`, join the influence system with "
-                    f"`~influence login` (note website MOTHER provides is out of date, use"
-                    f" https://influence.thecorporateer.com instead), attend weekly meetings, join us on the forums"
-                    f" with the username and password pinned in #announcements, perhaps sign up for M1 with"
-                    f" `^trainme`, and of course join us ingame :)",
+            content=f"User {handle_e} successfully added/updated. HR rep is `{hr_rep}`. New members guide attached."
+                    f" Next steps are:"
+                    f"\nJoin 2 or more divisions with `^reqdiv`,"
+                    f"\nJoin the influence system with `~influence login` "
+                    f"(note website MOTHER provides is out of date, use https://influence.thecorporateer.com instead),"
+                    f"\nAttend weekly meetings,"
+                    f"\nJoin us on the forums with the username and password pinned in #announcements,"
+                    f"\nPerhaps sign up for M1 with `^trainme`,"
+                    f"\nAnd of course join us in game :)",
             file=discord.File('New_Members_Guide_V2.1.pdf'))
 
         # Log for HR/bookkeeping
         await self.bot.get_channel(registration_channel).send(
-            f"**{member.mention}** has successfully become a Corporateer at {now()}. Their RSI link is:\n"
-            f"```{profiles_url + handle_e}```")
+            f"**{member.mention}** has successfully become a Corporateer or updated their RSI handle at {now()}. "
+            f"Their RSI link is:\n```{profiles_url + handle_e}```")
         embed = discord.Embed(title='New Corporateer!', description='', color=member.color)
         embed.add_field(name="User:", value=member.mention, inline=False)
         embed.add_field(name="Citizen Number #", value=citizen['citizen_record'], inline=False)
-        embed.add_field(name="RSI URL:", value=profiles_url + handle_e.content, inline=False)
+        embed.add_field(name="RSI URL:", value=profiles_url + handle_e, inline=False)
         embed.add_field(name="Languages:", value=f"{citizen['languages']}.", inline=False)
         embed.add_field(name="Location:", value=f"{citizen['location']}.", inline=False)
         embed.add_field(name="Joined CORP:", value=joined, inline=False)
         embed.add_field(name="Joined RSI:", value=citizen['enlisted'], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
-        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention}, please verify "
-                                                     f"this user hasn't registered in the past, and use `^remove_corp`"
-                                                     f" if their Corporateer tag needs removing.")
+        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention}, "
+                                                     f"please say hello!")
 
     @commands.command(name='checkrsi', aliases=['fetch_cit, rsi'], description='Check citizen\'s rsi profile')
     async def fetch_citizen_cmd(self, ctx, user):
@@ -520,7 +506,8 @@ class Corp(commands.Cog):
                       description='List all the divisons of members in your voice channel or target voice channel.')
     async def list_divs(self, ctx, num=0, *, channel=None):
         """
-        Print a list of the division tags of everyone in the selected voice channel. Add a number to list the top that many, defaults to 10.
+        Print a list of the division tags of everyone in the selected voice channel. Add a number to list the top that
+         many, defaults to 10.
         """
         if num < 1:
             num = 10

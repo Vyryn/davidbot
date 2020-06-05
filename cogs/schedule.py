@@ -19,7 +19,7 @@ async def remind_routine(increments, user, author, message):
     print(f'{user} has been sent their reminder {message}')
 
 
-class Events(commands.Cog):
+class Schedule(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -260,4 +260,4 @@ class Events(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Basics(bot))
+    bot.add_cog(Schedule(bot))

@@ -22,7 +22,7 @@ confirmed_ids = {}
 # Some channel and role IDs
 ping_role = 680917298906923214
 candidate_role = 540584857068372007
-recruiter_role = 376500752203644928
+recruiter_role = 261396521805807617 # This is actually HR. Recruiter: 376500752203644928
 visitor_role = 96472823354118144
 corp_tag_id = 92031682596601856
 registration_channel = 204841604522049536
