@@ -148,7 +148,7 @@ class Corp(commands.Cog):
         handle_e = ""
         while not flag:
             await ctx.send(
-                content=understand_david_msg)
+                content=understand_david_msg, file=discord.File('rsi_register_helper_image_3.png'))
             try:
                 rsi_handle = await self.bot.wait_for('message', check=check_author(ctx.author), timeout=deltime)
             except asyncio.TimeoutError:
