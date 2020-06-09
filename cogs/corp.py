@@ -558,10 +558,15 @@ class Corp(commands.Cog):
         dept = divs.get(div.casefold(), 'none')
         # If not a valid division
         if dept == 'none':
-            await ctx.send(
+            return await ctx.send(
                 f"Hmm, I didn't find {div} in our list of divisions. Our divisions are all in the picture below.\n"
                 f"{div_pic}")
             return
+        elif div.casefold() is 'Diplomacy'.casefold():
+            return await ctx.send("Thank you for your interest in Diplomacy. This division is a bit unique, and due "
+                                  "to the nature of diplomacy it generally requires at least S2 security clearance. I "
+                                  "recommend joining some other divisions first, getting to know some members of the "
+                                  "organization. If you are still interested in Diplomacy, contact Weyland directly.")
         print(f'{ctx.author} used reqdiv to request to join {div} at {now()}.')
         # Find DH and DL roles
         for role in ctx.guild.roles:

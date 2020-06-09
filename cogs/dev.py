@@ -202,6 +202,7 @@ class Dev(commands.Cog):
             'discord': discord,
             'commands': commands,
             'ctx': ctx,
+            'guild': ctx.guild,
             'self': self,
             '__import__': __import__
         }
