@@ -562,7 +562,7 @@ class Corp(commands.Cog):
                 f"Hmm, I didn't find {div} in our list of divisions. Our divisions are all in the picture below.\n"
                 f"{div_pic}")
             return
-        elif div.casefold() is 'Diplomacy'.casefold():
+        if div.casefold() == 'Diplomacy'.casefold():
             return await ctx.send("Thank you for your interest in Diplomacy. This division is a bit unique, and due "
                                   "to the nature of diplomacy it generally requires at least S2 security clearance. I "
                                   "recommend joining some other divisions first, getting to know some members of the "
