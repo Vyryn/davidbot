@@ -181,7 +181,8 @@ class Corp(commands.Cog):
                         f'for assistance with their application.')
                     await ctx.send(get_a_person)
                     return
-            handle_e = rsi_handle.content
+            split = rsi_handle.content.split('/')
+            handle_e = split[len(split) - 1]
             # Confirm RSI handle
             flag2 = False
             while not flag2:
@@ -224,8 +225,10 @@ class Corp(commands.Cog):
         if response.content.casefold() == 'how'.casefold():
             await ctx.send(
                 content=f"Here's a more detailed description of how to do that.\n```\n"
-                        f"1) Go to https://robertsspaceindustries.com/account/profile and scroll down to where it says 'Short Bio'\n"
-                        f"2) Add 'I am {ctx.author} on Discord.' to the 'Short Bio' and then Click 'APPLY ALL CHANGES'\n"
+                        f"1) Go to https://robertsspaceindustries.com/account/profile"
+                        f" and scroll down to where it says 'Short Bio'\n"
+                        f"2) Add 'I am {ctx.author} on Discord.' to the 'Short Bio' and then Click "
+                        f"'APPLY ALL CHANGES'\n"
                         f"3) Check that you are in The Corporation on RSI and it is visible on your profile.\n"
                         f"4) Tell me 'ok' and I'll check your profile.```",
                 file=discord.File('rsi_register_helper_image_2.png'))
