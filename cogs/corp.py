@@ -331,11 +331,11 @@ class Corp(commands.Cog):
         # Log for HR/bookkeeping
         await self.bot.get_channel(registration_channel).send(
             f"**{ctx.author.mention}** has successfully become a Corporateer at {now()}. Their RSI link is:\n"
-            f"```{profiles_url + rsi_handle.content}```")
+            f"```{profiles_url + handle_e}```")
         embed = discord.Embed(title='New Corporateer!', description='', color=ctx.author.color)
         embed.add_field(name="User:", value=ctx.author.mention, inline=False)
         embed.add_field(name="Citizen Number #", value=citizen['citizen_record'], inline=False)
-        embed.add_field(name="RSI URL:", value=profiles_url + rsi_handle.content, inline=False)
+        embed.add_field(name="RSI URL:", value=profiles_url + handle_e, inline=False)
         embed.add_field(name="Languages:", value=f"{citizen['languages']}.", inline=False)
         embed.add_field(name="Location:", value=f"{citizen['location']}.", inline=False)
         embed.add_field(name="Joined CORP:", value=joined, inline=False)
