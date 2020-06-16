@@ -7,7 +7,7 @@ from cogs.corp import corp_tag_id, check_ok, check_author, fetch_citizen
 from cogs.database import adduser
 from functions import basicperms, sigperms, deltime, embed_footer, now, log_channel, ping_role, recruiter_role, \
     candidate_role, welcome_david_msg, timeout_msg, help_david_msg, get_a_person, understand_david_msg, hr_reps, \
-    visitor_role, registration_channel, profiles_url, div_alternative_names
+    visitor_role, registration_channel, profiles_url, div_alternative_names, active_hr
 
 
 class Members(commands.Cog):
@@ -25,7 +25,11 @@ class Members(commands.Cog):
         embed = discord.Embed(title='', description='', color=discord.Color.teal())
         embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.id}')
         embed.set_footer(text=f'User Joined • {now()}')
-        await member.guild.get_channel(log_channel).send('@here', embed=embed)
+        selected_advocate = member.guild.get_member(random.choice(active_hr))
+        await member.guild.get_channel(log_channel).send(f'{selected_advocate.mention}, you have been randomly '
+                                                         f'selected as their advocate. Please reach out to that '
+                                                         f'member for a personal touch and react to this message with '
+                                                         f'a wave when you have.', embed=embed)
         print(f'{member.display_name} ({member.mention}) has joined {member.guild}.')
 
         """
