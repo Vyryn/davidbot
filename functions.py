@@ -22,7 +22,7 @@ confirmed_ids = {}
 # Some channel and role IDs
 ping_role = 680917298906923214
 candidate_role = 540584857068372007
-recruiter_role = 261396521805807617 # This is actually HR. Recruiter: 376500752203644928
+recruiter_role = 261396521805807617  # This is actually HR. Recruiter: 376500752203644928
 visitor_role = 96472823354118144
 corp_tag_id = 92031682596601856
 registration_channel = 204841604522049536
@@ -77,14 +77,28 @@ active_hr = [258333445967577088, 81980368688779264, 161213984538755073, 19492192
 timeout = 1800
 
 # The bot randomly selects one of these statuses at startup
-statuses = ["Being an adult is just walking around wondering what you're forgetting.",
-            'A clean house is the sign of a broken computer.',
-            "I have as much authority as the Pope, i just don't have as many people who believe it.",
-            'A conclusion is the part where you got tired of thinking.',
-            'To the mathematicians who thought of the idea of zero, thanks for nothing!',
-            'My job is secure. No one else wants it.',
-            "If at first you don't succeed, we have a lot in common.",
-            'I think we should get rid of democracy. All in favor raise your hand.']
+statuses = ["The Elevator to success is currently out of order, you will have to take the stairs.",
+            "Never underestimate your abilities, that is your Boss's job.",
+            "The successful business person is the one who discovers what is wrong with their business before their "
+            "competitors do.",
+            "The light at the end of the tunnel has been turned off, due to budget cuts.",
+            "I love deadlines. Especially the whooshing sound they make as they fly by.",
+            "I don't understand people who say 'I don't know how to thank you'. Like they have never heard of money.",
+            "Being powerful is like being popular, if you have to tell people you are... you aren't.",
+            "If ever in doubt, just keep smiling. It makes people wonder what you are really up to.",
+            "It is easier to move from failure to success, than from excuses to success.",
+            "I cannot make it to this week's crisis... my schedule is already full.",
+            "Accept that some days you are the pigeon, and some days you are the Statue.",
+            "If your competitor's are going to hate you... make sure that they spell your name right.",
+            "The six most expensive words in business are; 'We've always done it that way.'",
+            "If you are grouchy, irritable or just plain mean... there will be a 10,000 aUEC charge for putting up "
+            "with you.",
+            "Sometimes the best business practice is to remind people that you can be an asshole too.",
+            "Some people are like clouds, when they disappear it is a beautiful day.",
+            "Never argue with an idiot, they will always bring you down to their level and beat you with experience.",
+            "Every successful business began with a single step.",
+            "Compete until the competition brag about how they know you.",
+            "To win without risk, is to triumph without glory."]
 # Which discord perms are consider basic/important
 basicperms = ['administrator', 'manage_guild', 'ban_members', 'manage_roles', 'manage_messages']
 # Which discord perms are consider significant/notable

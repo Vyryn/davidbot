@@ -261,6 +261,13 @@ class Basics(commands.Cog):
         await ctx.send(f'It is currently {now()}.')
         print(f'Time command used by {ctx.author} at {now()}.')
 
+    @commands.command(description='See who contributed to the bot.')
+    async def credits(self, ctx):
+        await ctx.send("""Davidbot created by Vyryn#4618.
+        Big thanks to the beta testers: Chippy_X#4905, Slimey2#9610, RotorBoy#7385, Revoxxer#0042 and DARTHEDDEUS#3907.
+        The bot was of course all made possible by Weyland#1569.
+        Funny byline quotes by Stonewayne#6498.
+        And of course thank you to everyone who contributed suggestions for improving David.""")
 
 def setup(bot):
     bot.add_cog(Basics(bot))
