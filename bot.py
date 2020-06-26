@@ -38,7 +38,8 @@ async def on_command_error(ctx, error):
         return
     elif isinstance(error, commands.MissingRequiredArgument):
         try:
-            await ctx.send("Incomplete command.", delete_after=deltime)
+            await ctx.send("Incomplete command. You can use ^help [command] for instructions on how to use"
+                           " this command properly.", delete_after=deltime)
         except:
             pass
         return print(f'Error, MissingRequiredArgument in command {ctx.command}: {error.args[0]}')

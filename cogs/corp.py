@@ -4,6 +4,7 @@ from collections import Counter
 
 import aiohttp
 import discord
+import typing
 from discord.ext import commands
 from cogs.database import adduser, get_rsi
 from functions import now, today, auth, corp_tag_id, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
@@ -347,16 +348,21 @@ class Corp(commands.Cog):
                                                      f" a warm welcome in #lobby then mark this post with :corpyes:")
 
     @commands.command(name='verify', description='Verify someone\'s registration!')
-    async def corp_verify(self, ctx, member: discord.Member, *, handle_e=None):
+    async def corp_verify(self, ctx, member: typing.Optional[discord.Member] = None, *, handle_e=None):
         """
         Verify someone's Corporateer registration.
         Usage: verify [@mention or id] [rsi handle]
-        If and only if discord username is exactly RSI handle, can omit RSI handle here.
+        If and only if discord username is exactly RSI handle, you can omit RSI handle here.
+        If you are registering yourself, you can omit member:
+        ^register RSI_handle
         """
+        if member is None:
+            member = ctx.author
         # If already registered, don't let them register again
         if ctx.guild.get_role(667268366456717332) in member.roles or ctx.guild.get_role(
                 corp_tag_id) in member.roles:
-            await ctx.send('User already has Corporateer tag. Proceeding anyways.')
+            # await ctx.send('User already has Corporateer tag. Proceeding anyways.')
+            pass
             # return  #  Commented out due to proceeding anyways. Likely temporary.
         # Assume RSI handle is discord nick or username if there is none
         if handle_e is None:
@@ -364,7 +370,7 @@ class Corp(commands.Cog):
                 handle_e = member.nick
             else:
                 handle_e = member.display_name
-        await ctx.send(f"Checking their RSI profile...")
+        await ctx.send(f"Checking RSI profile...")
         citizen = fetch_citizen(handle_e)
         print(citizen)
         # await ctx.send("Here's what I found.")
@@ -385,8 +391,9 @@ class Corp(commands.Cog):
             return await ctx.send("User not in The Corporation.")
         # Verify phrase in user bio
         if f'I am {member}' not in citizen['bio']:
-            return await ctx.send(f"'I am {member} on Discord' not found in user bio.")
-        await ctx.send("User in The Corporation. Phrase found in bio. Attempting to add Corporateer tag.")
+            return await ctx.send(f"I didn't find 'I am {member} on Discord' in that user's bio. If you aren't sure "
+                                  f"how to fix this, consider using ^register instead for a step by step process.")
+        await ctx.send("User in The Corporation. Phrase found in bio. Adding Corporateer tag.")
         # Complete paperwork
         hr_rep = ctx.author.display_name
         joined = now()
@@ -544,11 +551,17 @@ class Corp(commands.Cog):
             message += f'{counter})  {div[1]} x {div[0]}\n'
         await ctx.send(f'I found the following divs:\n{message}')
 
-    @commands.command(name='reqdiv', description='Request a division tag for any division or divisions')
-    async def reqdiv(self, ctx, *, div):
+    @commands.command(name='reqdiv', description="Request a division tag.")
+    async def reqdiv(self, ctx, *, div: str = None):
         """
         Request a division tag for any divs in divs
         """
+        if div is None:
+            return await ctx.send(
+                f"Our divisions are all in the picture below. I recommend using this command again with a division to "
+                f"request 2-3 divisions of your choice :smile: \n"
+                f"{div_pic}")
+            return
         # If not yet registered, don't allow use of reqdiv
         if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
             await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
