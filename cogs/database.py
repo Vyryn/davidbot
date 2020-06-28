@@ -80,6 +80,19 @@ def get_rsi(member_id: int):  # Simply query the DB for a single RSI link from a
     return return_val
 
 
+def get_rsi_name(member_id: int):  # Simply query the DB for a single RSI handle from a given user id
+    connect()
+    query = "SELECT rsi FROM users WHERE id = (%s)"
+    values = member_id
+    cursor.execute(query, (values,))
+    try:
+        return_val = cursor.fetchall()[0][0]
+    except IndexError:
+        return_val = 'Not Found'
+    disconnect()
+    return return_val
+
+
 class Database(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

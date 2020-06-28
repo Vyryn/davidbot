@@ -630,11 +630,10 @@ class Corp(commands.Cog):
         except KeyError:
             await ctx.send('I think you mis-typed their rsi handle.')
             return
-        languages = citizen['languages']
-        location = citizen['location']
-        orgs = citizen['orgs']
-        to_send = f"I found some information on that person's RSI profile.\n{rsi}'s orgs:\n{orgs}\n" \
-                  f"Languages:{languages}\nLocation:{location}"
+        languages = ', '.join([language for language in citizen['languages']])
+        orgs = ', '.join([org['name'] for org in citizen['orgs']])
+        to_send = f"I found some information on that person's RSI profile.\n**Orgs:**\n{orgs}\n" \
+                  f"**Languages:**\n{languages}"
         await ctx.send(to_send)
 
     @commands.command(name='remove_corp', description='Removes someone\'s Corporateer tag')
