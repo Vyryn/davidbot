@@ -139,7 +139,7 @@ class Members(commands.Cog):
             await ctx.send(f'Removed {target}\'s Evocati role.')
         # Fetch RSI handle from database if not provided in command
         if rsi_handle is None:
-            rsi_handle = get_rsi_name(member.id)
+            rsi_handle = get_rsi_name(target.id)
             if rsi_handle == 'Not found':
                 return await ctx.send(f"Well this is awkward. You have a Corp tag but I don't have your "
                                       f"RSI handle stored in my database. This may be because you joined the Corp "
