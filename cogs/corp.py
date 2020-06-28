@@ -607,7 +607,7 @@ class Corp(commands.Cog):
         try:  # can check if the citizen call was valid by trying to get the first key from it
             rsi_number = citizen['citizen_record']
         except KeyError:
-            await ctx.send('I think you mis-typed their rsi handle. Contact Vyryn if this issue persists.')
+            await ctx.send('I think you mis-typed their rsi handle.')
             return
         languages = citizen['languages']
         location = citizen['location']
@@ -616,6 +616,26 @@ class Corp(commands.Cog):
         result = adduser(user, rsi, languages, location, joined_rsi, rsi_number, joined, hr_rep)
         await ctx.send(result)
         print(result)
+
+    @commands.command(name='checkorgs', description='Checks what organizations someone is a part of.')
+    @commands.check(auth(1))
+    async def adduser(self, ctx, rsi):
+        """
+        Lists user's orgs, location and languages. Test command for upcoming automatic adding of these.
+        Requires Auth 1
+        """
+        citizen = fetch_citizen(rsi)
+        try:  # can check if the citizen call was valid by trying to get the first key from it
+            rsi_number = citizen['citizen_record']
+        except KeyError:
+            await ctx.send('I think you mis-typed their rsi handle.')
+            return
+        languages = citizen['languages']
+        location = citizen['location']
+        orgs = citizen['orgs']
+        to_send = f"I found some information on that person's RSI profile.\n{rsi}'s orgs:\n{orgs}\n" \
+                  f"Languages:{languages}\nLocation:{location}"
+        await ctx.send(to_send)
 
     @commands.command(name='remove_corp', description='Removes someone\'s Corporateer tag')
     @commands.check(auth(1))
