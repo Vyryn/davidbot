@@ -107,6 +107,22 @@ def check_author(author):
     return in_check
 
 
+async def assign_language_tags(ctx, languages):
+    roles = dict(zip([role['name'] for role in ctx.guild.roles], ctx.guild.roles))
+    print(roles)
+    for language in languages:
+        if language in roles:
+            await ctx.author.add_roles(roles[language])
+            await ctx.send(f'Found language {language} in RSI bio, adding tag.')
+        else:
+            new_role = await ctx.guild.create_role(reason="David adding language role due to finding in an RSI"
+                                                          " profile but language not yet being a discord role.",
+                                                   name=language,
+                                                   mentionable=True)
+            await ctx.author.add_roles(new_role)
+            await ctx.send(f'Found {language} in RSI bio, creating and adding tag.')
+
+
 class Corp(commands.Cog):
 
     def __init__(self, bot):
@@ -313,9 +329,10 @@ class Corp(commands.Cog):
                 await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                                "and my role is high enough in the role list.")
                 return
+            assign_language_tags(ctx, citizen['languages'])
         else:
-            await ctx.send(f"I'm sorry you weren't able to complete the process this time. When you're ready to try" \
-                           f" again, use `^register` again.")
+            await ctx.send(f"I'm sorry you weren't able to complete the process this time. "
+                           f"When you're ready to try again, use `^register` again.")
             return
         await ctx.send(
             content=f"Welcome! Enjoy your time here at Corp. Your HR rep is `{hr_rep}`. If you"
@@ -403,6 +420,7 @@ class Corp(commands.Cog):
         joined_rsi = citizen['enlisted']
         hr_rep = random.choice(hr_reps)
         adduser(member, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
+        assign_language_tags(ctx, languages)
         # Get display name so it can be changed to RSI name.
         disp = None
         if member.nick is not None:
