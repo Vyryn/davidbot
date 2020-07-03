@@ -8,7 +8,8 @@ from cogs.corp import corp_tag_id, check_ok, check_author, fetch_citizen
 from cogs.database import adduser, get_rsi_name
 from functions import basicperms, sigperms, deltime, embed_footer, now, log_channel, ping_role, recruiter_role, \
     candidate_role, welcome_david_msg, timeout_msg, help_david_msg, get_a_person, understand_david_msg, hr_reps, \
-    visitor_role, registration_channel, profiles_url, div_alternative_names, active_hr, evocati_role
+    visitor_role, registration_channel, profiles_url, div_alternative_names, active_hr, evocati_role, event_role, \
+    organizer_role
 
 
 class Members(commands.Cog):
@@ -117,10 +118,38 @@ class Members(commands.Cog):
             await target.add_roles(the_ping_role)
             await ctx.send(f'Added {target}\'s @PING role.')
 
+    # Toggle @EVENT role
+    @commands.command(name='event',
+                      description='Assign or remove the EVENT tag.')
+    @commands.guild_only()
+    async def toggle_event_tag(self, ctx, member: discord.Member = None):
+        """
+        Assign somoene the EVENT tag. Requires gaming-session tag.
+        """
+        # If not yet registered, don't allow to add EVENT
+        if ctx.guild.get_role(corp_tag_id) not in ctx.author.roles:
+            await ctx.send("I'm sorry, that person needs to get a Corporateer tag first. Use `^register`.")
+            return
+        target = ctx.author
+        the_event_role = ctx.guild.get_role(event_role)
+        the_organizer_role = ctx.guild.get_role(organizer_role)
+        if the_organizer_role not in ctx.author.roles:
+            return await ctx.send("Im sorry, you need a gaming-session role to be able to give out EVENT tags.")
+        # For recruiters
+        if ctx.guild.get_role(recruiter_role) in ctx.author.roles and member is not None:
+            target = member
+        # Toggle ping role
+        if the_event_role in target.roles:
+            await target.remove_roles(the_event_role)
+            await ctx.send(f'Removed {target}\'s @EVENT role.')
+        else:
+            await target.add_roles(the_event_role)
+            await ctx.send(f'Added {target}\'s @EVENT role.')
+
     # Toggle Evocati role
     @commands.command(name='evocati', description='Self-assign or remove the Evocati role.')
     @commands.guild_only()
-    async def toggle_ping_tag(self, ctx, member: typing.Optional[discord.Member] = None, rsi_handle: str = None):
+    async def toggle_evocati_tag(self, ctx, member: typing.Optional[discord.Member] = None, rsi_handle: str = None):
         """
         Assign yourself the Evocati tag. Requires a Corporateer tag. Only works if you are in the Evocati org on RSI
         Recruiters can also assign the Evocati tag to other people **only if they are in the Evocati org on RSI**
