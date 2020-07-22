@@ -637,7 +637,7 @@ class Corp(commands.Cog):
 
     @commands.command(name='checkorgs', description='Checks what organizations someone is a part of.')
     @commands.check(auth(1))
-    async def adduser(self, ctx, rsi):
+    async def checkorgs(self, ctx, rsi):
         """
         Lists user's orgs, location and languages. Test command for upcoming automatic adding of these.
         Requires Auth 1
