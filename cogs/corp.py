@@ -601,6 +601,12 @@ class Corp(commands.Cog):
                                   "to the nature of diplomacy it generally requires at least S2 security clearance. I "
                                   "recommend joining some other divisions first, getting to know some members of the "
                                   "organization. If you are still interested in Diplomacy, contact Weyland directly.")
+        elif div.casefold() == 'Training'.casefold():
+            author_role_ids = [role.id for role in ctx.author.roles]
+            if self.bot.mtags.isdisjoint(author_role_ids):  # If member has no M tag
+                return await ctx.send("Thank you for your interest in Training. Joining this division requires an M-1 "
+                                      "or higher certification. You can earn an M-1 tag by participating in an M-1 "
+                                      "training: Sign up for an M-1 training with `^trainme`. Good luck! ")
         print(f'{ctx.author} used reqdiv to request to join {div} at {now()}.')
         # Find DH and DL roles
         for role in ctx.guild.roles:

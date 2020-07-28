@@ -16,6 +16,9 @@ bot = commands.Bot(command_prefix=get_prefix)
 # Events
 @bot.event
 async def on_ready():
+    # The id of the M1-8 tags, in order.
+    bot.mtags = set([518901709670580230, 518901839412854804, 508216744347828244, 518901932820135947,
+                     518902204149661711, 518902467350626304, 518902509595656192, 518902550825533440])
     # Pick a random current status on startup
     await bot.change_presence(status=discord.Status.online, activity=discord.Game(random.choice(statuses)))
     print('Bot is ready.')
