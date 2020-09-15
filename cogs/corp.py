@@ -435,8 +435,16 @@ class Corp(commands.Cog):
             if ctx.guild.get_role(visitor_role) in member.roles:
                 await member.remove_roles(ctx.guild.get_role(visitor_role))
             if disp != handle_e:
-                await member.edit(reason='Bot change to match RSI handle', nick=handle_e)
-                await ctx.send(f"{member}'s nickname changed to match their RSI handle.")
+                try:
+                    await member.edit(reason='Bot change to match RSI handle', nick=handle_e)
+                    await ctx.send(f"{member}'s nickname changed to match their RSI handle.")
+                except PermissionError:
+                    await ctx.guild.get_member(81980368688779264).send(f"I was unable to update {member}'s nickname"
+                                                                       f" to match their rsi handle of {handle_e} due"
+                                                                       f" to role ordering.")
+                    await ctx.send(f"Due to the way discord role lists work, I can't change {member}'s nickname"
+                                   f" to {handle_e}. Only Weyland can. I have messaged him with the "
+                                   f"request, and he will probably update it within a few hours. ")
         except PermissionError:
             await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                            "and my role is high enough in the role list.")
