@@ -438,7 +438,7 @@ class Corp(commands.Cog):
                 try:
                     await member.edit(reason='Bot change to match RSI handle', nick=handle_e)
                     await ctx.send(f"{member}'s nickname changed to match their RSI handle.")
-                except PermissionError:
+                except:
                     await ctx.guild.get_member(81980368688779264).send(f"I was unable to update {member}'s nickname"
                                                                        f" to match their rsi handle of {handle_e} due"
                                                                        f" to role ordering.")

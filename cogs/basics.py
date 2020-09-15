@@ -68,8 +68,10 @@ class Basics(commands.Cog):
             log_dict['attachment'] = {'filename': message.attachments[0].filename, 'url': message.attachments[0].url}
         # Log message
         # log(log_dict)
-        log(log_msg, message)
-        # print(log_msg)
+        try:
+            log(log_msg, message)
+        except AttributeError:
+            print(log_msg)
 
     # ==============================Reaction handler======================================
     @commands.Cog.listener()
