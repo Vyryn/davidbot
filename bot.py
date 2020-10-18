@@ -11,7 +11,11 @@ from itertools import cycle
 from functions import statuses, auth, get_prefix, deltime, owner_id, get_ignored_channels, set_ignored_channels
 from privatevars import TOKEN
 
-bot = commands.Bot(command_prefix=get_prefix)
+intents = discord.Intents.all()
+intents.typing = False
+
+bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True, intents=intents)
+
 
 # Events
 @bot.event
@@ -154,7 +158,6 @@ async def ignorech(ctx):
         json.dump(no_command_channels, f, indent=4)
     set_ignored_channels()
     await ctx.send("Adding channel to ignore list.", delete_after=deltime)
-
 
 
 @bot.command(name='restart', description='Restart the bot')
