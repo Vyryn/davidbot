@@ -41,6 +41,7 @@ def pquery(query):
 
 def adduser(user: discord.User, rsi, languages, location, joined_rsi, rsi_number, joined, hr_rep):
     connect()
+    pre_query = "DELETE FROM users WHERE id = %s"
     query = "INSERT INTO users (id, name, user_name, rsi, rsi_link, languages, location, joined_rsi, rsi_number, " \
             "joined, hr_rep) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
     rsi_link = f'https://robertsspaceindustries.com/citizens/{rsi}'
@@ -48,6 +49,7 @@ def adduser(user: discord.User, rsi, languages, location, joined_rsi, rsi_number
         user.id, user.name, str(user), rsi, rsi_link, str(languages), str(location), str(joined_rsi), int(rsi_number),
         str(joined), hr_rep)
     try:
+        cursor.execute(pre_query, (user.id,))
         cursor.execute(query, values)
         db.commit()
         return f'{cursor.rowcount} record(s) added successfully.'

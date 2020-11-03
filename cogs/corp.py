@@ -108,7 +108,7 @@ def check_author(author):
 
 
 async def assign_language_tags(ctx, languages):
-    roles = dict(zip([role['name'] for role in ctx.guild.roles], ctx.guild.roles))
+    roles = dict(zip([role.name for role in ctx.guild.roles], ctx.guild.roles))
     print(roles)
     for language in languages:
         if language in roles:
@@ -420,7 +420,7 @@ class Corp(commands.Cog):
         joined_rsi = citizen['enlisted']
         hr_rep = random.choice(hr_reps)
         adduser(member, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
-        assign_language_tags(ctx, languages)
+        await assign_language_tags(ctx, languages)
         # Get display name so it can be changed to RSI name.
         disp = None
         if member.nick is not None:
