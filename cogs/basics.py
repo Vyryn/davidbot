@@ -73,87 +73,6 @@ class Basics(commands.Cog):
         except AttributeError:
             print(log_msg)
 
-    # ==============================Reaction handler======================================
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
-        # print(f'New reaction {payload.emoji} on message {payload.message_id} in {payload.channel_id} by user {
-        # payload.user_id}.')
-        # ===============================Polls==================================
-        if payload.user_id == bot_id:
-            pass
-        else:
-            if payload.message_id in poll_ids.keys():
-                for channel in self.bot.get_all_channels():
-                    if channel.id is poll_ids[payload.message_id]["id"]:
-                        user = await self.bot.fetch_user(payload.user_id)
-                        try:
-                            user_responses = poll_ids[payload.message_id][user.id]
-                        except KeyError:
-                            poll_ids[payload.message_id][user.id] = 0
-                            user_responses = 0
-                        if user_responses < poll_ids[payload.message_id]['max']:
-                            print(f'New reaction on poll {payload.message_id} by {user}.')
-                            poll_ids[payload.message_id][reactions_to_nums[payload.emoji.name] - 1] += [user.id]
-                            try:
-                                poll_ids[payload.message_id][user.id] += 1
-                            except KeyError:
-                                poll_ids[payload.message_id][user.id] = 1
-                            print(poll_ids)
-                            try:
-                                msg = await channel.fetch_message(payload.message_id)
-                                new_embed = discord.Embed(title='', description='',
-                                                          color=user.color)
-                                new_embed.set_author(icon_url=user.avatar_url,
-                                                     name=poll_ids[payload.message_id]["title"])
-                                for i in range(0, 9):
-                                    if len(poll_ids[payload.message_id].get(i, [])) > 0:
-                                        new_embed.add_field(name=f"Option {i + 1}:",
-                                                            value=len(poll_ids[payload.message_id][i]))
-                                await msg.edit(embed=new_embed)
-                                return
-                            except NotFound:
-                                continue
-                        else:
-                            await self.bot.get_channel(payload.channel_id).send(f'{user}, you have already replied '
-                                                                                f'the maximum number of times '
-                                                                                f'to that poll. If you want to change '
-                                                                                f'your responses, remove '
-                                                                                f'your previous reaction(s) and try '
-                                                                                f'again.',
-                                                                                delete_after=deltime)
-                            await (await self.bot.get_channel(payload.channel_id).fetch_message(
-                                payload.message_id)).remove_reaction(payload.emoji,
-                                                                     self.bot.get_guild(payload.guild_id).get_member(
-                                                                         payload.user_id))
-        # print(f'Reaction {payload.emoji.name} added to message {payload.message_id} by user {payload.user_id}.') #temporarily commented for discord.py issue
-
-    # Reaction removal handler
-    @commands.Cog.listener()
-    async def on_raw_reaction_remove(self, payload):
-        # print(f'New reaction {payload.emoji} on message {payload.message_id} in {payload.channel_id} by user {
-        # payload.user_id}.') Deal with polls
-        if payload.message_id in poll_ids.keys():
-            for channel in self.bot.get_all_channels():
-                if channel.id is poll_ids[payload.message_id]["id"]:
-                    user = await self.bot.fetch_user(payload.user_id)
-                    poll_ids[payload.message_id][reactions_to_nums[payload.emoji.name] - 1].remove(user.id)
-                    poll_ids[payload.message_id][user.id] -= 1
-                    print(poll_ids)
-                    try:
-                        msg = await channel.fetch_message(payload.message_id)
-                        new_embed = discord.Embed(title='', description='', color=user.color)
-                        new_embed.set_author(icon_url=user.avatar_url, name=poll_ids[payload.message_id]["title"])
-                        for i in range(0, 9):
-                            if len(poll_ids[payload.message_id].get(i, [])) > 0:
-                                new_embed.add_field(name=f"Option {i + 1}:", value=len(poll_ids[payload.message_id][i]))
-                        if len(new_embed.fields) == 0:
-                            new_embed.add_field(name="Poll Results:", value="No votes yet.")
-                        await msg.edit(embed=new_embed)
-                        return
-                    except NotFound:
-                        continue
-        # print(f'Reaction {payload.emoji.name} removed from message {payload.message_id} by user {payload.user_id}.') #temporarily commented for discord.py issue
-
     # Commands
     @commands.command(name='ping', aliases=['plonk'], description='Pong!')
     async def ping(self, ctx):
@@ -207,55 +126,6 @@ class Basics(commands.Cog):
         print(f'Remind command used by {ctx.author} at {now()} with reminder {reminder} to user {user} for '
               f'time {increments}.')
 
-#    @remind.error
-#    async def remind_error(self, ctx, error):
-#        await ctx.send(f'{ctx.author}, the correct usage is **`/remind <reminder> in <0s>/<0m>/<0h>/<0d>/<0w>/<0y>`** '
-#                       f'\n That "in" is important.',
-#                       delete_after=deltime)
-#        print(f"Silly {ctx.author} couldn\'t figure out how to use Remind. (lol)")
-
-    @commands.command(name='poll', pass_context=True, description='Create a poll.')
-    async def create_poll(self, ctx, num_options=2, max_options=1, *, text):
-        """Creates a poll.
-            num_options is how many options your poll has
-            max_options is the maximum number someone can select
-            text is what your poll is asking
-        """
-        if num_options < 1:
-            num_options = 1
-        elif num_options > 9:
-            num_options = 9
-        embed = discord.Embed(title=f'Poll Results', color=ctx.author.color)
-        embed.set_author(icon_url=ctx.author.avatar_url, name=f'{text}')
-        results = f'No Votes Yet.'
-        embed.add_field(name='Poll Results:', value=results)
-        poll_message = await ctx.send(content=None, embed=embed)
-        print(f'Created a new poll from the message in channel {poll_message.channel.id} with id {poll_message.id}.')
-        poll_ids[poll_message.id] = {'id': poll_message.channel.id}
-        poll_ids[poll_message.id]['title'] = text
-        poll_ids[poll_message.id]['max'] = max_options
-        for i in range(0, num_options):
-            await poll_message.add_reaction(number_reactions[i])
-            poll_ids[poll_message.id][i] = []
-            await asyncio.sleep(0.1)
-        with open('polls.json', 'r') as f:
-            polls = json.load(f)
-        polls[poll_message.id] = poll_ids[poll_message.id]
-        with open('polls.json', 'w') as f:
-            json.dump(polls, f, indent=4)
-        print(poll_message.embeds[0].fields[0].value)
-        print(f'Poll command used by {ctx.author} at {now()} with poll {text}.')
-
-    # Adds +1 and -1 reactions to your message
-    @commands.command(name='yesno', pass_context=True, description='Adds yes and no to your message')
-    async def yessno(self, ctx, *, message):
-        """Adds :+1: and :-1: reactions to your message.
-        """
-        await ctx.message.add_reaction('\U00010031')
-        await ctx.message.add_reaction('\U00010032')
-        print(f'Yesno command used by {ctx.author} at {now()} with message {message}.')
-        return
-
     @commands.command(name='time', description='Check the current time')
     async def time(self, ctx):
         """Check the current time
@@ -270,6 +140,7 @@ class Basics(commands.Cog):
         The bot was of course all made possible by Weyland#1569.
         Funny byline quotes by Stonewayne#6498.
         And of course thank you to everyone who contributed suggestions for improving David.""")
+
 
 def setup(bot):
     bot.add_cog(Basics(bot))
