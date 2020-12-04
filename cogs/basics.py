@@ -6,7 +6,7 @@ import discord
 from discord import NotFound
 from discord.ext import commands
 from functions import deltime, poll_ids, now, log, number_reactions, reactions_to_nums, \
-    bot_id, set_polls, owner_id
+    bot_id, owner_id
 
 
 async def remind_routine(increments, user, author, message):
@@ -22,7 +22,6 @@ async def remind_routine(increments, user, author, message):
 class Basics(commands.Cog):
 
     def __init__(self, bot):
-        set_polls()
         # Save the auth and polls variables to file every 5 minutes
         # self.bg_task = self.bot.loop.create_task((300, reminder))
         self.bot = bot

@@ -191,7 +191,7 @@ async def restart(ctx):
 
 # load all cogs in cogs folder at launch
 for filename in os.listdir('./cogs'):
-    if filename.endswith('.py'):
+    if filename.endswith('.py') and 'test' not in filename:
         bot.load_extension(f'cogs.{filename[:-3]}')  # load up each extension
 
 # run bot

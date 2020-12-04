@@ -6,7 +6,7 @@ import discord
 from discord import NotFound
 from discord.ext import commands
 from functions import deltime, poll_ids, now, log, number_reactions, reactions_to_nums, \
-    bot_id, set_polls, owner_id
+    bot_id, owner_id
 
 
 async def remind_routine(increments, user, author, message):

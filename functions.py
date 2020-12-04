@@ -131,7 +131,7 @@ def write_json_var(name, obj):
     with open(f'{name}.json', 'w') as f:
         json.dump(obj, f, indent=4)
 
-
+1
 # Update the memory bot_commanders dict by reading from file
 def set_commanders():
     global bot_commanders
@@ -158,12 +158,6 @@ def get_commanders():
     return bot_commanders
 
 
-# Return the poll_ids dict
-def get_polls():
-    global poll_ids
-    return poll_ids
-
-
 # Return the apikeys dict
 def get_apikeys():
     global apikeys
@@ -174,19 +168,6 @@ def get_apikeys():
 def set_apikeys():
     global apikeys
     apikeys = load_json_var('apikeys')
-    return
-
-
-# Update the memory poll_ids dict by reading from file
-def set_polls():
-    global poll_ids
-    poll_ids = load_json_var('polls')
-
-
-# Save poll_ids to file
-def save_polls():
-    global poll_ids
-    write_json_var('polls', poll_ids)
     return
 
 
