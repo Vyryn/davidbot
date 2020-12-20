@@ -361,7 +361,7 @@ class Corp(commands.Cog):
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
         # str(feedback.content)
-        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention} please give them"
+        await self.bot.get_channel(log_channel).send(f"Please give them"
                                                      f" a warm welcome in #lobby then mark this post with :corpyes:")
 
     @commands.command(name='verify', description='Verify someone\'s registration!')
