@@ -8,8 +8,9 @@ import typing
 from discord.ext import commands
 from cogs.database import adduser, get_rsi
 from functions import now, today, auth, corp_tag_id, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
-    timeout_msg, get_a_person, timeout as deltime, hr_reps, get_item, div_req_notif_ch, welcome_david_msg, \
-    understand_david_msg, help_david_msg, recruiter_role, visitor_role, div_alternative_names, divs, div_pic
+    timeout_msg, get_a_person, timeout as deltime, get_item, div_req_notif_ch, welcome_david_msg, \
+    understand_david_msg, help_david_msg, recruiter_role, visitor_role, div_alternative_names, divs, div_pic, \
+    load_json_var, write_json_var
 import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
@@ -105,6 +106,38 @@ def check_author(author):
         return message.author == author
 
     return in_check
+
+
+def hr_reps(guild):
+    """Load up the HR reps"""
+    reps = load_json_var('hr_reps')
+    result = []
+    for rep in reps:
+        result += [guild.get_member(int(rep))]
+    return result
+
+
+# # The possible randomly assigned values of 'hr_rep' in the corp DB
+# hr_reps = ['RotorBoy', 'Revoxxer', 'Chippy_X', 'Advantys287', 'drdeath-uk', 'Cintara']
+# active_hr = [258333445967577088, 81980368688779264, 161213984538755073, 194921921110867969, 245018662728105985,
+#              529104984764317717, 273718401573191680, 217688969150857216, 230532646956957696, 361775236296998915]
+
+def add_hr(member: discord.User):
+    """Add a user to the active HR rep list. Fails silently."""
+    reps = load_json_var('hr_reps')
+    if str(member.id) in reps:
+        return
+    reps.append(str(member.id))
+    write_json_var('hr_reps', reps)
+
+
+def del_hr(member: discord.User):
+    """Remove a user from the active HR rep list. Fails silently."""
+    reps = load_json_var('hr_reps')
+    if str(member.id) not in reps:
+        return
+    reps.remove(str(member.id))
+    write_json_var('hr_reps', reps)
 
 
 async def assign_language_tags(ctx, languages):
@@ -308,7 +341,7 @@ class Corp(commands.Cog):
             languages = citizen.get('languages', '')
             location = citizen.get('location', '')
             joined_rsi = citizen['enlisted']
-            hr_rep = random.choice(hr_reps)
+            hr_rep = random.choice(hr_reps(ctx.guild))
             adduser(ctx.author, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
             # Get display name so it can be changed to RSI name.
             disp = None
@@ -418,7 +451,7 @@ class Corp(commands.Cog):
         languages = citizen.get('languages', '')
         location = citizen.get('location', '')
         joined_rsi = citizen['enlisted']
-        hr_rep = random.choice(hr_reps)
+        hr_rep = random.choice(hr_reps(ctx.guild))
         adduser(member, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
         await assign_language_tags(ctx, languages)
         # Get display name so it can be changed to RSI name.
@@ -644,7 +677,7 @@ class Corp(commands.Cog):
         languages = citizen['languages']
         location = citizen['location']
         joined_rsi = citizen['enlisted']
-        hr_rep = random.choice(hr_reps)
+        hr_rep = random.choice(hr_reps(ctx.guild))
         result = adduser(user, rsi, languages, location, joined_rsi, rsi_number, joined, hr_rep)
         await ctx.send(result)
         print(result)
@@ -681,6 +714,18 @@ class Corp(commands.Cog):
         except PermissionError:
             await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                            "and my role is high enough in the role list.")
+
+    @commands.command(description='Add someone to the HR Rep list')
+    @commands.check(auth(1))
+    async def add_hr(self, ctx, member: discord.User):
+        add_hr(member)
+        return await ctx.send(f'{member} added to the HR rep list.')
+
+    @commands.command(description='Remove someone from the HR Rep list')
+    @commands.check(auth(1))
+    async def remove_hr(self, ctx, member: discord.User):
+        del_hr(member)
+        return await ctx.send(f'{member} removed from the HR rep list.')
 
 
 def setup(bot):

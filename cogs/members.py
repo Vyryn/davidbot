@@ -4,12 +4,10 @@ import discord
 import typing
 from discord.ext import commands
 
-from cogs.corp import corp_tag_id, check_ok, check_author, fetch_citizen
-from cogs.database import adduser, get_rsi_name
+from cogs.corp import corp_tag_id, fetch_citizen, hr_reps
+from cogs.database import get_rsi_name
 from functions import basicperms, sigperms, deltime, embed_footer, now, log_channel, ping_role, recruiter_role, \
-    candidate_role, welcome_david_msg, timeout_msg, help_david_msg, get_a_person, understand_david_msg, hr_reps, \
-    visitor_role, registration_channel, profiles_url, div_alternative_names, active_hr, evocati_role, event_role, \
-    organizer_role
+    candidate_role, div_alternative_names, evocati_role, event_role, organizer_role
 
 
 class Members(commands.Cog):
@@ -27,7 +25,7 @@ class Members(commands.Cog):
         embed = discord.Embed(title='', description='', color=discord.Color.teal())
         embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.id}')
         embed.set_footer(text=f'User Joined • {now()}')
-        selected_advocate = member.guild.get_member(random.choice(active_hr))
+        selected_advocate = random.choice(hr_reps(member.guild))
         await member.guild.get_channel(log_channel).send(f'{selected_advocate.mention}, you have been randomly '
                                                          f'selected as their advocate. Please reach out to that '
                                                          f'member for a personal touch and react to this message with '

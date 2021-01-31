@@ -47,7 +47,7 @@ def adduser(user: discord.User, rsi, languages, location, joined_rsi, rsi_number
     rsi_link = f'https://robertsspaceindustries.com/citizens/{rsi}'
     values = (
         user.id, user.name, str(user), rsi, rsi_link, str(languages), str(location), str(joined_rsi), int(rsi_number),
-        str(joined), hr_rep)
+        str(joined), hr_rep.id)
     try:
         cursor.execute(pre_query, (user.id,))
         cursor.execute(query, values)

@@ -71,11 +71,6 @@ understand_david_msg = "Great. Now I know you can understand me :smiley:\nCan yo
                        " here? Or, if you're not sure how to that, type `how` or type `help` to get help from a person."
 help_david_msg = '@Recruiter, {} has requested a personal touch for assistance with their application.'
 
-# The possible randomly assigned values of 'hr_rep' in the corp DB
-hr_reps = ['RotorBoy', 'Revoxxer', 'Chippy_X', 'Advantys287', 'drdeath-uk', 'Cintara']
-active_hr = [258333445967577088, 81980368688779264, 161213984538755073, 194921921110867969, 245018662728105985,
-             529104984764317717, 273718401573191680, 217688969150857216, 230532646956957696, 361775236296998915]
-
 # The number of seconds to wait to time out the registration process from inactivity
 timeout = 1800
 
