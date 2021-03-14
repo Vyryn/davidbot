@@ -1,4 +1,7 @@
+import copy
 import time
+import timeit
+import typing
 
 import discord
 import json
@@ -223,6 +226,52 @@ class Dev(commands.Cog):
         await (await ctx.channel.fetch_message(message_id)).delete()
         await ctx.message.delete(delay=deltime)  # delete the command
         print(f'Deleted message {message_id} in channel {ctx.channel} for user {ctx.author} at {now()}')
+
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def sudo(self, ctx, channel: typing.Optional[discord.TextChannel], user: discord.User, *, command: str):
+        """Invoke a command as another user, in another channel."""
+        message = copy.copy(ctx.message)
+        channel = channel or ctx.channel
+        message.channel = channel
+        message.author = channel.guild.get_member(user.id) or user
+        message.content = ctx.prefix + command
+        ctx = await self.bot.get_context(message, cls=type(ctx))
+        await self.bot.invoke(ctx)
+
+    @commands.command(name='timeit', hidden=True)
+    @commands.is_owner()
+    async def timeit_(self, ctx, setup_='', times: int = 10, cmd: str = 'pass'):
+        """Time an operation."""
+        env = {'bot': ctx.bot,
+               'discord': discord,
+               'commands': commands,
+               'ctx': ctx,
+               'guild': ctx.guild,
+               'channel': ctx.channel,
+               'me': ctx.author,
+               'self': self,
+               '__import__': __import__
+               }
+        env.update(globals())
+        try:
+            result = timeit.timeit(cmd, number=times, setup=setup_, globals=env)
+        except Exception as e:
+            return await ctx.send(f'Error attempting to run the requested timeit: ```py\n{e}\n```')
+        await ctx.send(f'{result}')
+
+    @commands.command()
+    @commands.check(auth(1))
+    async def mkpost(self, ctx, *, content: str):
+        """Uploads your text to mystb.in and provides a link."""
+        url = await self.bot.create_bin(content)
+        await ctx.send(url)
+
+    @commands.command()
+    async def invite(self, ctx):
+        """Send an invite link for the bot in chat."""
+        await ctx.send(f'Invite me to your server:\n'
+                       f'https://discordapp.com/oauth2/authorize?client_id={self.bot.id}&scope=bot&permissions=8')
 
 
 def setup(bot):
