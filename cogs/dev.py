@@ -49,7 +49,10 @@ class Dev(commands.Cog):
         """Have the bot repeat your message.
                 Requires: Auth level 1
                 Message: The message to repeat"""
-        await ctx.message.delete()  # delete the command
+        try:
+            await ctx.message.delete()  # delete the command
+        except commands.CommandInvokeError:
+            pass
         await ctx.send(message)
         print(f'Echo command used by {ctx.author} at {now()} with message {message}')
 
@@ -63,7 +66,10 @@ class Dev(commands.Cog):
                 User: The user to message
                 Message: The message to send"""
         message = message or 'Someone is pranking you bro.'
-        await ctx.message.delete()  # delete the command
+        try:
+            await ctx.message.delete()  # delete the command
+        except commands.CommandInvokeError:
+            pass
         await ctx.send('Message sent.', delete_after=deltime)
         await user.send(message)
         print(f'Send command used by {ctx.author} at {now()} to user {user} with message {message}')
