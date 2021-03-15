@@ -51,7 +51,7 @@ class Dev(commands.Cog):
                 Message: The message to repeat"""
         try:
             await ctx.message.delete()  # delete the command
-        except commands.CommandInvokeError:
+        except discord.Forbidden:
             pass
         await ctx.send(message)
         print(f'Echo command used by {ctx.author} at {now()} with message {message}')
@@ -68,7 +68,7 @@ class Dev(commands.Cog):
         message = message or 'Someone is pranking you bro.'
         try:
             await ctx.message.delete()  # delete the command
-        except commands.CommandInvokeError:
+        except discord.Forbidden:
             pass
         await ctx.send('Message sent.', delete_after=deltime)
         await user.send(message)
