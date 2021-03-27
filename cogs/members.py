@@ -101,7 +101,8 @@ class Members(commands.Cog):
         """
         # If not yet registered, don't allow use of ping
         if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
-            await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
+            prefix = await self.bot.get_prefix(ctx.message)
+            await ctx.send(f'I\'m sorry, you need to get a Corporateer tag first. Use `{prefix}register`.')
             return
         target = ctx.author
         the_ping_role = ctx.guild.get_role(ping_role)
@@ -126,7 +127,8 @@ class Members(commands.Cog):
         """
         # If not yet registered, don't allow to add EVENT
         if ctx.guild.get_role(corp_tag_id) not in ctx.author.roles:
-            await ctx.send("I'm sorry, that person needs to get a Corporateer tag first. Use `^register`.")
+            prefix = await self.bot.get_prefix(ctx.message)
+            await ctx.send(f"I'm sorry, that person needs to get a Corporateer tag first. Use `{prefix}register`.")
             return
         target = ctx.author
         the_event_role = ctx.guild.get_role(event_role)
@@ -154,7 +156,8 @@ class Members(commands.Cog):
         """
         # If not yet registered, don't allow use of ping
         if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
-            await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
+            prefix = await self.bot.get_prefix(ctx.message)
+            await ctx.send(f'I\'m sorry, you need to get a Corporateer tag first. Use `{prefix}register`.')
             return
         target = ctx.author
         the_evocati_role = ctx.guild.get_role(evocati_role)
@@ -168,10 +171,11 @@ class Members(commands.Cog):
         if rsi_handle is None:
             rsi_handle = get_rsi_name(target.id)
             if rsi_handle == 'Not found':
+                prefix = await self.bot.get_prefix(ctx.message)
                 return await ctx.send(f"Well this is awkward. You have a Corp tag but I don't have your "
                                       f"RSI handle stored in my database. This may be because you joined the Corp "
-                                      f"before I was born. If you could ^verify your RSI handle I could do my job"
-                                      f" better :smiley:")
+                                      f"before I was born. If you could {prefix}verify your RSI handle I could do my "
+                                      f"job better :smiley:")
         # Check RSI profile
         citizen = fetch_citizen(rsi_handle)
         print([org['sid'] for org in citizen['orgs']])
@@ -193,7 +197,8 @@ class Members(commands.Cog):
         """
         # If not yet registered, don't allow use of ping
         if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
-            await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
+            prefix = await self.bot.get_prefix(ctx.message)
+            await ctx.send(f'I\'m sorry, you need to get a Corporateer tag first. Use `{prefix}register`.')
             return
         target = ctx.author
         the_candidate_role = ctx.guild.get_role(candidate_role)

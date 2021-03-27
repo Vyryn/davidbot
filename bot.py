@@ -48,15 +48,16 @@ async def on_command_error(ctx, error):
         return
     elif isinstance(error, commands.MissingRequiredArgument):
         try:
-            await ctx.send("Incomplete command. You can use ^help [command] for instructions on how to use"
+            prefix = await bot.get_prefix(ctx.message)
+            await ctx.send(f"Incomplete command. You can use {prefix}help [command] for instructions on how to use"
                            " this command properly.", delete_after=deltime)
-        except:
+        except (discord.Forbidden, discord.HTTPException):
             pass
         return print(f'Error, MissingRequiredArgument in command {ctx.command}: {error.args[0]}')
     elif isinstance(error, commands.MissingPermissions):
         try:
             await ctx.send(f'{ctx.author}, {error}', delete_after=deltime)
-        except:
+        except (discord.Forbidden, discord.HTTPException):
             pass
         return print(f'{ctx.author} tried to use {ctx.command} without sufficient permissions.')
     elif isinstance(error, commands.CheckFailure):

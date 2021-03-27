@@ -364,20 +364,22 @@ class Corp(commands.Cog):
                 return
             assign_language_tags(ctx, citizen['languages'])
         else:
+            prefix = await self.bot.get_prefix(ctx.message)
             await ctx.send(f"I'm sorry you weren't able to complete the process this time. "
-                           f"When you're ready to try again, use `^register` again.")
+                           f"When you're ready to try again, use `{prefix}register` again.")
             return
         await ctx.send(
             content=f"Welcome! Enjoy your time here at Corp. Your HR rep is `{hr_rep}`. If you"
                     f" have any questions I'm not able to answer, please do contact them. This is our new members "
                     f"guide, it may be of use to you. Read at your leisure. :smiley:",
             file=discord.File('New_Members_Guide_V2.1.pdf'))
+        prefix = await self.bot.get_prefix(ctx.message)
         await ctx.send("The next step is to join some divisions. Much of the content of the Corporation is hidden and"
                        " visible only to division members. You can choose one or several that you are interested in."
-                       " When you're ready to join some divisions, type `^reqdiv division`. Be sure to do so to see "
-                       "all the fun content!")
-        await ctx.send("If you'd like some training, type `^trainme` to let our trainers know you want to participate"
-                       " in the next M1 training session.")
+                       f" When you're ready to join some divisions, type `{prefix}reqdiv division`. Be sure to do so "
+                       f"to see all the fun content!")
+        await ctx.send(f"If you'd like some training, type `{prefix}trainme` to let our trainers know you want to "
+                       "participate in the next M1 training session.")
 
         # Log for HR/bookkeeping
         await self.bot.get_channel(registration_channel).send(
@@ -404,7 +406,7 @@ class Corp(commands.Cog):
         Usage: verify [@mention or id] [rsi handle]
         If and only if discord username is exactly RSI handle, you can omit RSI handle here.
         If you are registering yourself, you can omit member:
-        ^register RSI_handle
+        register RSI_handle
         """
         if member is None:
             member = ctx.author
@@ -441,8 +443,10 @@ class Corp(commands.Cog):
             return await ctx.send("User not in The Corporation.")
         # Verify phrase in user bio
         if f'I am {member}' not in citizen['bio']:
+            prefix = await self.bot.get_prefix(ctx.message)
             return await ctx.send(f"I didn't find 'I am {member} on Discord' in that user's bio. If you aren't sure "
-                                  f"how to fix this, consider using ^register instead for a step by step process.")
+                                  f"how to fix this, consider using {prefix}register instead for a step by step "
+                                  f"process.")
         await ctx.send("User in The Corporation. Phrase found in bio. Adding Corporateer tag.")
         # Complete paperwork
         hr_rep = ctx.author.display_name
@@ -471,7 +475,7 @@ class Corp(commands.Cog):
                 try:
                     await member.edit(reason='Bot change to match RSI handle', nick=handle_e)
                     await ctx.send(f"{member}'s nickname changed to match their RSI handle.")
-                except:
+                except (discord.Forbidden, discord.HTTPException):
                     await ctx.guild.get_member(81980368688779264).send(f"I was unable to update {member}'s nickname"
                                                                        f" to match their rsi handle of {handle_e} due"
                                                                        f" to role ordering.")
@@ -482,15 +486,16 @@ class Corp(commands.Cog):
             await ctx.send("Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
                            "and my role is high enough in the role list.")
         # Send success info
+        prefix = await self.bot.get_prefix(ctx.message)
         await ctx.send(
             content=f"User {handle_e} successfully added/updated. HR rep is `{hr_rep}`. New members guide attached."
                     f" Next steps are:"
-                    f"\nJoin 2 or more divisions with `^reqdiv`,"
+                    f"\nJoin 2 or more divisions with `{prefix}reqdiv`,"
                     f"\nJoin the influence system with `~influence login` "
                     f"(note website MOTHER provides is out of date, use https://influence.thecorporateer.com instead),"
                     f"\nAttend weekly meetings,"
                     f"\nJoin us on the forums with the username and password pinned in #announcements,"
-                    f"\nPerhaps sign up for M1 with `^trainme`,"
+                    f"\nPerhaps sign up for M1 with `{prefix}trainme`,"
                     f"\nAnd of course join us in game :)",
             file=discord.File('New_Members_Guide_V2.1.pdf'))
 
@@ -623,7 +628,8 @@ class Corp(commands.Cog):
             return
         # If not yet registered, don't allow use of reqdiv
         if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
-            await ctx.send('I\'m sorry, you need to get a Corporateer tag first. Use `^register`.')
+            prefix = await self.bot.get_prefix(ctx.message)
+            await ctx.send(f'I\'m sorry, you need to get a Corporateer tag first. Use `{prefix}register`.')
             return
         # Find reporting channel
         for channel in ctx.guild.channels:
@@ -645,9 +651,10 @@ class Corp(commands.Cog):
         elif div.casefold() == 'Training'.casefold():
             author_role_ids = [role.id for role in ctx.author.roles]
             if self.bot.mtags.isdisjoint(author_role_ids):  # If member has no M tag
+                prefix = await self.bot.get_prefix(ctx.message)
                 return await ctx.send("Thank you for your interest in Training. Joining this division requires an M-1 "
                                       "or higher certification. You can earn an M-1 tag by participating in an M-1 "
-                                      "training: Sign up for an M-1 training with `^trainme`. Good luck! ")
+                                      f"training: Sign up for an M-1 training with `{prefix}trainme`. Good luck! ")
         print(f'{ctx.author} used reqdiv to request to join {div} at {now()}.')
         # Find DH and DL roles
         for role in ctx.guild.roles:
