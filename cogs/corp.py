@@ -113,7 +113,9 @@ def hr_reps(guild):
     reps = load_json_var('hr_reps')
     result = []
     for rep in reps:
-        result += [guild.get_member(int(rep))]
+        member = guild.get_member(int(rep))
+        if member is not None:
+            result += [member]
     return result
 
 
@@ -131,12 +133,15 @@ def add_hr(member: discord.User):
     write_json_var('hr_reps', reps)
 
 
-def del_hr(member: discord.User):
+def del_hr(member: typing.Union[discord.User, int]):
     """Remove a user from the active HR rep list. Fails silently."""
     reps = load_json_var('hr_reps')
-    if str(member.id) not in reps:
-        return
-    reps.remove(str(member.id))
+    if hasattr(member, 'id'):
+        if str(member.id) not in reps:
+            return
+        reps.remove(str(member.id))
+    else:
+        reps.remove(str(member))
     write_json_var('hr_reps', reps)
 
 
@@ -342,7 +347,12 @@ class Corp(commands.Cog):
             location = citizen.get('location', '')
             joined_rsi = citizen['enlisted']
             hr_rep = random.choice(hr_reps(ctx.guild))
-            adduser(ctx.author, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
+            while True:
+                try:
+                    adduser(ctx.author, handle_e, languages, location, joined_rsi, rsi_number, joined, hr_rep)
+                    break
+                except AttributeError:
+                    hr_rep = random.choice(hr_reps(ctx.guild))
             # Get display name so it can be changed to RSI name.
             disp = None
             if ctx.author.nick is not None:
