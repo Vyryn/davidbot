@@ -380,14 +380,14 @@ class Corp(commands.Cog):
             return
         await ctx.send(
             content=f"Welcome! Enjoy your time here at Corp. Your HR rep is `{hr_rep}`. If you"
-                    f" have any questions I'm not able to answer, please do contact them. This is our new members "
-                    f"guide, it may be of use to you. Read at your leisure. :smiley:",
-            file=discord.File('New_Members_Guide_V2.1.pdf'))
+                    f" have any questions I'm not able to answer, please do contact them.")
         prefix = await self.bot.get_prefix(ctx.message)
         await ctx.send("The next step is to join some divisions. Much of the content of the Corporation is hidden and"
-                       " visible only to division members. You can choose one or several that you are interested in."
+                       " visible only to division members. You can choose one or several from below that you are "
+                       "interested in."
                        f" When you're ready to join some divisions, type `{prefix}reqdiv division`. Be sure to do so "
                        f"to see all the fun content!")
+        await ctx.send(f"{div_pic}")
         await ctx.send(f"If you'd like some training, type `{prefix}trainme` to let our trainers know you want to "
                        "participate in the next M1 training session.")
 
@@ -498,7 +498,7 @@ class Corp(commands.Cog):
         # Send success info
         prefix = await self.bot.get_prefix(ctx.message)
         await ctx.send(
-            content=f"User {handle_e} successfully added/updated. HR rep is `{hr_rep}`. New members guide attached."
+            content=f"User {handle_e} successfully added/updated. HR rep is `{hr_rep}`."
                     f" Next steps are:"
                     f"\nJoin 2 or more divisions with `{prefix}reqdiv`,"
                     f"\nJoin the influence system with `~influence login` "
@@ -506,8 +506,8 @@ class Corp(commands.Cog):
                     f"\nAttend weekly meetings,"
                     f"\nJoin us on the forums with the username and password pinned in #announcements,"
                     f"\nPerhaps sign up for M1 with `{prefix}trainme`,"
-                    f"\nAnd of course join us in game :)",
-            file=discord.File('New_Members_Guide_V2.1.pdf'))
+                    f"\nAnd of course join us in game :)")
+        await ctx.send(f"{div_pic}")
 
         # Log for HR/bookkeeping
         await self.bot.get_channel(registration_channel).send(
@@ -635,7 +635,6 @@ class Corp(commands.Cog):
                 f"Our divisions are all in the picture below. I recommend using this command again with a division to "
                 f"request 2-3 divisions of your choice :smile: \n"
                 f"{div_pic}")
-            return
         # If not yet registered, don't allow use of reqdiv
         if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
             prefix = await self.bot.get_prefix(ctx.message)
@@ -652,7 +651,6 @@ class Corp(commands.Cog):
             return await ctx.send(
                 f"Hmm, I didn't find {div} in our list of divisions. Our divisions are all in the picture below.\n"
                 f"{div_pic}")
-            return
         if div.casefold() == 'Diplomacy'.casefold():
             return await ctx.send("Thank you for your interest in Diplomacy. This division is a bit unique, and due "
                                   "to the nature of diplomacy it generally requires at least S2 security clearance. I "
