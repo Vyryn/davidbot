@@ -2,6 +2,8 @@ import datetime
 import json
 from attr import dataclass
 
+import discord
+
 # The default global bot prefix
 global_prefix = ';'
 # The directory for cogs
@@ -28,6 +30,7 @@ candidate_role = 540584857068372007
 recruiter_role = 261396521805807617  # This is actually HR. Recruiter: 376500752203644928
 visitor_role = 96472823354118144
 corp_tag_id = 92031682596601856
+corp_shield_tag_id = 315095427361800192
 registration_channel = 204841604522049536
 log_channel = 272278325244723200  # 666816919399170049 in testing server
 div_req_notif_ch = 'recruitment'
@@ -271,6 +274,10 @@ def get_item(iterable_or_dict, index, default=None):
     except (IndexError, KeyError):
         return default
 
+def mem_is_in_corp(member: discord.Member):
+    corp = member.guild.get_role(corp_tag_id)
+    corp_shield = member.guild.get_role(corp_shield_tag_id)
+    return corp in member.roles or corp_shield in member.guild
 
 # For user info
 @dataclass

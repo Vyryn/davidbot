@@ -4,10 +4,10 @@ import discord
 import typing
 from discord.ext import commands
 
-from cogs.corp import corp_tag_id, fetch_citizen, hr_reps
+from cogs.corp import fetch_citizen, hr_reps
 from cogs.database import get_rsi_name
 from functions import basicperms, sigperms, deltime, embed_footer, now, log_channel, ping_role, recruiter_role, \
-    candidate_role, div_alternative_names, evocati_role, event_role, organizer_role
+    candidate_role, div_alternative_names, evocati_role, event_role, organizer_role, mem_is_in_corp
 
 
 class Members(commands.Cog):
@@ -40,7 +40,7 @@ class Members(commands.Cog):
     @commands.Cog.listener()
     @commands.guild_only()
     async def on_member_remove(self, member: discord.Member):
-        if member.guild.get_role(corp_tag_id) in member.roles:
+        if mem_is_in_corp(member):
             the_ping_role = member.guild.get_role(ping_role)
             embed = discord.Embed(title='', description='', color=discord.Color.red())
             embed.set_author(icon_url=member.avatar_url, name=f'{member} ({member.id}')
@@ -100,7 +100,7 @@ class Members(commands.Cog):
         Recruiters can also assign the @PING tag to other people.
         """
         # If not yet registered, don't allow use of ping
-        if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
+        if not mem_is_in_corp(ctx.author):
             prefix = await self.bot.get_prefix(ctx.message)
             await ctx.send(f'I\'m sorry, you need to get a Corporateer tag first. Use `{prefix}register`.')
             return
@@ -126,7 +126,7 @@ class Members(commands.Cog):
         Assign somoene the EVENT tag. Requires gaming-session tag.
         """
         # If not yet registered, don't allow to add EVENT
-        if ctx.guild.get_role(corp_tag_id) not in ctx.author.roles:
+        if not mem_is_in_corp(ctx.author):
             prefix = await self.bot.get_prefix(ctx.message)
             await ctx.send(f"I'm sorry, that person needs to get a Corporateer tag first. Use `{prefix}register`.")
             return
@@ -155,7 +155,7 @@ class Members(commands.Cog):
         Recruiters can also assign the Evocati tag to other people **only if they are in the Evocati org on RSI**
         """
         # If not yet registered, don't allow use of ping
-        if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
+        if not mem_is_in_corp(ctx.author):
             prefix = await self.bot.get_prefix(ctx.message)
             await ctx.send(f'I\'m sorry, you need to get a Corporateer tag first. Use `{prefix}register`.')
             return
@@ -196,7 +196,7 @@ class Members(commands.Cog):
         Recruiters can also assign the @Candidate tag to other people.
         """
         # If not yet registered, don't allow use of ping
-        if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
+        if not mem_is_in_corp(ctx.author):
             prefix = await self.bot.get_prefix(ctx.message)
             await ctx.send(f'I\'m sorry, you need to get a Corporateer tag first. Use `{prefix}register`.')
             return

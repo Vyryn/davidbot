@@ -7,10 +7,10 @@ import discord
 import typing
 from discord.ext import commands
 from cogs.database import adduser, get_rsi
-from functions import now, today, auth, corp_tag_id, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
+from functions import now, auth, registration_channel, log_channel, DEFAULT_RSI_URL, profiles_url, \
     timeout_msg, get_a_person, timeout as deltime, get_item, div_req_notif_ch, welcome_david_msg, \
     understand_david_msg, help_david_msg, recruiter_role, visitor_role, div_alternative_names, divs, div_pic, \
-    load_json_var, write_json_var
+    load_json_var, write_json_var, mem_is_in_corp, corp_tag_id
 import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
@@ -182,8 +182,7 @@ class Corp(commands.Cog):
         Register for the Corporation!
         """
         # If already registered, don't let them register again
-        if ctx.guild.get_role(667268366456717332) in ctx.author.roles or ctx.guild.get_role(
-                corp_tag_id) in ctx.author.roles:
+        if mem_is_in_corp(ctx.author):
             await ctx.send('It looks like you already have a Corporateer tag.')
             return
 
@@ -421,8 +420,7 @@ class Corp(commands.Cog):
         if member is None:
             member = ctx.author
         # If already registered, don't let them register again
-        if ctx.guild.get_role(667268366456717332) in member.roles or ctx.guild.get_role(
-                corp_tag_id) in member.roles:
+        if mem_is_in_corp(member):
             # await ctx.send('User already has Corporateer tag. Proceeding anyways.')
             pass
             # return  #  Commented out due to proceeding anyways. Likely temporary.
@@ -476,7 +474,7 @@ class Corp(commands.Cog):
             disp = member.display_name
         try:
             # Add Corporateer tag
-            if ctx.guild.get_role(corp_tag_id) not in member.roles:
+            if not mem_is_in_corp(member):
                 await member.add_roles(ctx.guild.get_role(corp_tag_id))
             # Remove Visitor tag
             if ctx.guild.get_role(visitor_role) in member.roles:
@@ -636,7 +634,7 @@ class Corp(commands.Cog):
                 f"request 2-3 divisions of your choice :smile: \n"
                 f"{div_pic}")
         # If not yet registered, don't allow use of reqdiv
-        if not ctx.guild.get_role(corp_tag_id) in ctx.author.roles:
+        if not mem_is_in_corp(ctx.author):
             prefix = await self.bot.get_prefix(ctx.message)
             await ctx.send(f'I\'m sorry, you need to get a Corporateer tag first. Use `{prefix}register`.')
             return
