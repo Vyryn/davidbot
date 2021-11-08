@@ -277,7 +277,7 @@ def get_item(iterable_or_dict, index, default=None):
 def mem_is_in_corp(member: discord.Member):
     corp = member.guild.get_role(corp_tag_id)
     corp_shield = member.guild.get_role(corp_shield_tag_id)
-    return corp in member.roles or corp_shield in member.guild
+    return corp in member.roles or corp_shield in member.roles
 
 # For user info
 @dataclass
