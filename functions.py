@@ -85,7 +85,7 @@ divs = {
     "media": "public relations",
     "e-sports": "public relations",
 }
-addable_divs = set(
+addable_divs = [
     "prospecting",
     "cartography",
     "research",
@@ -100,7 +100,7 @@ addable_divs = set(
     "training",
     "media",
     "e-sports",
-)
+]
 # Some registration messages
 timeout_msg = (
     "You took too long to respond. You will need to start the command over again if you wish to continue"
