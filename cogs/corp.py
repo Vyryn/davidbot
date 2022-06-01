@@ -836,6 +836,7 @@ class Corp(commands.Cog):
                 )
         print(f"{ctx.author} used reqdiv to request to join {div} at {now()}.")
         # Find Div, DH and DL roles
+        div_role = None
         for role in ctx.guild.roles:
             if role.name.casefold() == div.casefold():
                 div_role = role
@@ -843,6 +844,15 @@ class Corp(commands.Cog):
                 dl_role = role
             elif role.name.casefold() == f"DH {divs[div.casefold()]}".casefold():
                 dh_role = role
+        if div.casefold() in addable_divs and div_role is not None:
+            await ctx.author.add_roles(div_role)
+            await management.send(
+                f"{dl_role.mention}, {dh_role.mention}, {ctx.author} just joined your division. Please contact them at your convenience to welcome them."
+            )
+            return await ctx.send(
+                f"Welcome to {div}! I've added your role, and the division leadership will reach out when they're around to give you the office tour."
+            )
+
         await management.send(
             f"{dl_role.mention}, {dh_role.mention}, {ctx.author} is interested in joining {div}! "
             f"Please contact them at your convenience to help them with that."
