@@ -96,7 +96,6 @@ addable_divs = [
     "transport",
     "csar",
     "engineering",
-    "human resources",
     "training",
     "media",
     "e-sports",
