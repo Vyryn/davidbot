@@ -321,7 +321,7 @@ class Corp(commands.Cog):
         # one_time_code = random.randint(min_rand, min_rand * 10)
         await ctx.send(
             content=f"Great. Next I need to check your profile actually belongs to you.\n The way I'd like to do "
-            f"that is by having you **__add the phrase__** \n\nI am {ctx.author} on Discord\n\n**__ to your"
+            f"that is by having you **__add the phrase__** \n\n`I am {ctx.author} on Discord`\n\n**__ to your"
             f" RSI profile__** and then type `ok` and I'll take a look at your profile. Or, "
             f"if you're not sure how to do that, **__type__** `how`."
         )
