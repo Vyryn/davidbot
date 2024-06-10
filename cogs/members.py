@@ -235,6 +235,7 @@ class Members(commands.Cog):
         if the_evocati_role in target.roles:
             await target.remove_roles(the_evocati_role)
             await ctx.send(f"Removed {target}'s Evocati role.")
+            return
         # Fetch RSI handle from database if not provided in command
         if rsi_handle is None:
             rsi_handle = get_rsi_name(target.id)
