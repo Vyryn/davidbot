@@ -722,7 +722,11 @@ class Corp(commands.Cog):
             return
         members = []
         for member in channel.members:
+            if member is None:
+                continue
             link = get_rsi(member.id)
+            if link is None:
+                continue
             rsi = link[link.rfind("/") + 1 : len(link)]
             members.append((rsi, str(member), link))
         members = sorted(members)
