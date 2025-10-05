@@ -97,6 +97,7 @@ addable_divs = [
     "repo",
     "development",
     "transport",
+    "extraction",
     "csar",
     "engineering",
     "training",

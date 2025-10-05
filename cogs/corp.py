@@ -1,41 +1,44 @@
 import asyncio
 import random
+import re as _re
+import typing
 from collections import Counter
 
 import aiohttp
 import discord
-import typing
-from discord.ext import commands
-from cogs.database import adduser, get_rsi
-from functions import (
-    now,
-    auth,
-    registration_channel,
-    log_channel,
-    DEFAULT_RSI_URL,
-    profiles_url,
-    timeout_msg,
-    get_a_person,
-    timeout as deltime,
-    get_item,
-    div_req_notif_ch,
-    welcome_david_msg,
-    understand_david_msg,
-    help_david_msg,
-    recruiter_role,
-    visitor_role,
-    div_alternative_names,
-    divs,
-    div_pic,
-    load_json_var,
-    write_json_var,
-    mem_is_in_corp,
-    corp_tag_id,
-    addable_divs,
-)
-import re as _re
 import requests as _requests
 from bs4 import BeautifulSoup as _bs
+from discord.ext import commands
+
+from cogs.database import adduser, get_rsi
+from functions import (
+    DEFAULT_RSI_URL,
+    addable_divs,
+    auth,
+    corp_tag_id,
+    div_alternative_names,
+    div_pic,
+    div_req_notif_ch,
+    divs,
+    get_a_person,
+    get_item,
+    help_david_msg,
+    load_json_var,
+    log_channel,
+    mem_is_in_corp,
+    now,
+    profiles_url,
+    recruiter_role,
+    registration_channel,
+    timeout_msg,
+    understand_david_msg,
+    visitor_role,
+    welcome_david_msg,
+    write_json_var,
+)
+from functions import (
+    timeout as deltime,
+)
 
 session = aiohttp.ClientSession()
 
@@ -59,31 +62,23 @@ def fetch_citizen(name, url=DEFAULT_RSI_URL, endpoint="/citizens", skip_orgs=Fal
         result["title_icon"] = get_item(soup.select(".info .icon img"), 0, "")
         if result["title_icon"]:
             result["title_icon"] = "{}/{}".format(url, result["title_icon"]["src"])
-        result["avatar"] = "{}/{}".format(
-            url, soup.select(".profile .thumb img")[0]["src"].lstrip("/")
-        )
+        result["avatar"] = "{}/{}".format(url, soup.select(".profile .thumb img")[0]["src"].lstrip("/"))
         result["url"] = citizen_url
 
         if soup.select(".profile-content .bio"):
-            result["bio"] = (
-                soup.select(".profile-content .bio")[0].text.strip("\nBio").strip()
-            )
+            result["bio"] = soup.select(".profile-content .bio")[0].text.strip("\nBio").strip()
         else:
             result["bio"] = ""
         result["citizen_record"] = soup.select(".citizen-record .value")[0].text
         try:
             result["citizen_record"] = int(result["citizen_record"][1:])
         except:
-            print(
-                "Encountered unexpceted citizen_record. Making citizen_record 1000000000."
-            )
+            print("Encountered unexpceted citizen_record. Making citizen_record 1000000000.")
             result["citizen_record"] = 1000000000
             pass
 
         _ = {
-            _.select_one("span")
-            .text: _re.sub(r"\s+", " ", _.select_one(".value").text.strip())
-            .replace(" ,", ",")
+            _.select_one("span").text: _re.sub(r"\s+", " ", _.select_one(".value").text.strip()).replace(" ,", ",")
             for _ in soup.select(".profile-content > .left-col .entry")
         }
         result["enlisted"] = get_item(_, "Enlisted", "")
@@ -97,9 +92,7 @@ def fetch_citizen(name, url=DEFAULT_RSI_URL, endpoint="/citizens", skip_orgs=Fal
                 orgsoup = _bs(orgs_page.text, features="lxml")
                 result["orgs"] = []
                 for org in orgsoup.select(".orgs-content .org"):
-                    orgname, sid, rank = [
-                        _.text for _ in org.select(".info .entry .value")
-                    ]
+                    orgname, sid, rank = [_.text for _ in org.select(".info .entry .value")]
                     if orgname[0] == "\xa0":
                         orgname = sid = rank = "REDACTED"
 
@@ -118,9 +111,7 @@ def fetch_citizen(name, url=DEFAULT_RSI_URL, endpoint="/citizens", skip_orgs=Fal
                         "roles": roles,
                     }
                     try:
-                        orgdata["icon"] = "{}/{}".format(
-                            url, org.select(".thumb img")[0]["src"].lstrip("/")
-                        )
+                        orgdata["icon"] = "{}/{}".format(url, org.select(".thumb img")[0]["src"].lstrip("/"))
                     except IndexError:
                         pass
 
@@ -131,8 +122,7 @@ def fetch_citizen(name, url=DEFAULT_RSI_URL, endpoint="/citizens", skip_orgs=Fal
 def check_ok(author):
     def in_check(message):
         return message.author == author and (
-            "ok".casefold() in message.content.casefold()
-            or "help".casefold() in message.content.casefold()
+            "ok".casefold() in message.content.casefold() or "help".casefold() in message.content.casefold()
         )
 
     return in_check
@@ -228,16 +218,12 @@ class Corp(commands.Cog):
         # Make sure they understand
         await ctx.send(welcome_david_msg.format(author=ctx.author.mention))
         try:
-            response = await self.bot.wait_for(
-                "message", check=check_ok(ctx.author), timeout=deltime
-            )
+            response = await self.bot.wait_for("message", check=check_ok(ctx.author), timeout=deltime)
         except asyncio.TimeoutError:
             await ctx.send(timeout_msg)
             return
         if response.content.casefold() == "help".casefold():
-            await ctx.guild.get_channel(log_channel).send(
-                help_david_msg.format(ctx.author)
-            )
+            await ctx.guild.get_channel(log_channel).send(help_david_msg.format(ctx.author))
             await ctx.send(get_a_person)
             return
         # Get RSI handle, can get link from this.
@@ -249,16 +235,13 @@ class Corp(commands.Cog):
                 file=discord.File("rsi_register_helper_image_3.png"),
             )
             try:
-                rsi_handle = await self.bot.wait_for(
-                    "message", check=check_author(ctx.author), timeout=deltime
-                )
+                rsi_handle = await self.bot.wait_for("message", check=check_author(ctx.author), timeout=deltime)
             except asyncio.TimeoutError:
                 await ctx.send(timeout_msg)
                 return
             if response.content.casefold() == "help".casefold():
                 await ctx.guild.get_channel(log_channel).send(
-                    f"@Recruiter, {ctx.author} has requested a personal touch "
-                    f"for assistance with their application."
+                    f"@Recruiter, {ctx.author} has requested a personal touch for assistance with their application."
                 )
                 await ctx.send(get_a_person)
                 return
@@ -275,9 +258,7 @@ class Corp(commands.Cog):
                 )
                 await ctx.send("When you're ready, please post your RSI handle here.")
                 try:
-                    rsi_handle = await self.bot.wait_for(
-                        "message", check=check_author(ctx.author), timeout=deltime
-                    )
+                    rsi_handle = await self.bot.wait_for("message", check=check_author(ctx.author), timeout=deltime)
                 except asyncio.TimeoutError:
                     await ctx.send(timeout_msg)
                     return
@@ -298,9 +279,7 @@ class Corp(commands.Cog):
                     f"**__Confirm with__** \n```\nok```\n, or type it again if you made a mistake."
                 )
                 try:
-                    response = await self.bot.wait_for(
-                        "message", check=check_author(ctx.author), timeout=deltime
-                    )
+                    response = await self.bot.wait_for("message", check=check_author(ctx.author), timeout=deltime)
                 except asyncio.TimeoutError:
                     await ctx.send(timeout_msg)
                     return
@@ -326,16 +305,13 @@ class Corp(commands.Cog):
             f"if you're not sure how to do that, **__type__** `how`."
         )
         try:
-            response = await self.bot.wait_for(
-                "message", check=check_author(ctx.author), timeout=deltime
-            )
+            response = await self.bot.wait_for("message", check=check_author(ctx.author), timeout=deltime)
         except asyncio.TimeoutError:
             await ctx.send(timeout_msg)
             return
         if response.content.casefold() == "help".casefold():
             await ctx.guild.get_channel(log_channel).send(
-                f"@Recruiter, {ctx.author} has requested a personal touch "
-                f"for assistance with their application."
+                f"@Recruiter, {ctx.author} has requested a personal touch for assistance with their application."
             )
             await ctx.send(get_a_person)
             return
@@ -351,9 +327,7 @@ class Corp(commands.Cog):
                 file=discord.File("rsi_register_helper_image_2.png"),
             )
             try:
-                ok_check = await self.bot.wait_for(
-                    "message", check=check_ok(ctx.author), timeout=deltime
-                )
+                ok_check = await self.bot.wait_for("message", check=check_ok(ctx.author), timeout=deltime)
             except asyncio.TimeoutError:
                 await ctx.send(timeout_msg)
                 return
@@ -450,13 +424,9 @@ class Corp(commands.Cog):
                 await ctx.author.add_roles(ctx.guild.get_role(corp_tag_id))
                 if ctx.guild.get_role(visitor_role) in ctx.author.roles:
                     await ctx.author.remove_roles(ctx.guild.get_role(visitor_role))
-                    await ctx.send(
-                        f"Removed {ctx.author}'s @Visitor role.", delete_after=10
-                    )
+                    await ctx.send(f"Removed {ctx.author}'s @Visitor role.", delete_after=10)
                 if disp != handle_e:
-                    await ctx.author.edit(
-                        reason="Bot change to match RSI handle", nick=handle_e
-                    )
+                    await ctx.author.edit(reason="Bot change to match RSI handle", nick=handle_e)
                     await ctx.send(
                         "I have changed your nickname on this server to match your RSI handle so that games"
                         " nights can be done more easily."
@@ -498,17 +468,11 @@ class Corp(commands.Cog):
             f"**{ctx.author.mention}** has successfully become a Corporateer at {now()}. Their RSI link is:\n"
             f"```{profiles_url + handle_e}```"
         )
-        embed = discord.Embed(
-            title="New Corporateer!", description="", color=ctx.author.color
-        )
+        embed = discord.Embed(title="New Corporateer!", description="", color=ctx.author.color)
         embed.add_field(name="User:", value=ctx.author.mention, inline=False)
-        embed.add_field(
-            name="Citizen Number #", value=citizen["citizen_record"], inline=False
-        )
+        embed.add_field(name="Citizen Number #", value=citizen["citizen_record"], inline=False)
         embed.add_field(name="RSI URL:", value=profiles_url + handle_e, inline=False)
-        embed.add_field(
-            name="Languages:", value=f"{citizen['languages']}.", inline=False
-        )
+        embed.add_field(name="Languages:", value=f"{citizen['languages']}.", inline=False)
         embed.add_field(name="Location:", value=f"{citizen['location']}.", inline=False)
         embed.add_field(name="Joined CORP:", value=joined, inline=False)
         embed.add_field(name="Joined RSI:", value=citizen["enlisted"], inline=False)
@@ -516,14 +480,11 @@ class Corp(commands.Cog):
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
         # str(feedback.content)
         await self.bot.get_channel(log_channel).send(
-            f"Please give them"
-            f" a warm welcome in #lobby then mark this post with :corpyes:"
+            f"Please give them a warm welcome in #lobby then mark this post with :corpyes:"
         )
 
     @commands.command(name="verify", description="Verify someone's registration!")
-    async def corp_verify(
-        self, ctx, member: typing.Optional[discord.Member] = None, *, handle_e=None
-    ):
+    async def corp_verify(self, ctx, member: typing.Optional[discord.Member] = None, *, handle_e=None):
         """
         Verify someone's Corporateer registration.
         Usage: verify [@mention or id] [rsi handle]
@@ -571,9 +532,7 @@ class Corp(commands.Cog):
                 f"how to fix this, consider using {prefix}register instead for a step by step "
                 f"process."
             )
-        await ctx.send(
-            "User in The Corporation. Phrase found in bio. Adding Corporateer tag."
-        )
+        await ctx.send("User in The Corporation. Phrase found in bio. Adding Corporateer tag.")
         # Complete paperwork
         hr_rep = ctx.author.display_name
         joined = now()
@@ -608,12 +567,8 @@ class Corp(commands.Cog):
                 await member.remove_roles(ctx.guild.get_role(visitor_role))
             if disp != handle_e:
                 try:
-                    await member.edit(
-                        reason="Bot change to match RSI handle", nick=handle_e
-                    )
-                    await ctx.send(
-                        f"{member}'s nickname changed to match their RSI handle."
-                    )
+                    await member.edit(reason="Bot change to match RSI handle", nick=handle_e)
+                    await ctx.send(f"{member}'s nickname changed to match their RSI handle.")
                 except (discord.Forbidden, discord.HTTPException):
                     await ctx.guild.get_member(81980368688779264).send(
                         f"I was unable to update {member}'s nickname"
@@ -650,25 +605,17 @@ class Corp(commands.Cog):
             f"**{member.mention}** has successfully become a Corporateer or updated their RSI handle at {now()}. "
             f"Their RSI link is:\n```{profiles_url + handle_e}```"
         )
-        embed = discord.Embed(
-            title="New Corporateer!", description="", color=member.color
-        )
+        embed = discord.Embed(title="New Corporateer!", description="", color=member.color)
         embed.add_field(name="User:", value=member.mention, inline=False)
-        embed.add_field(
-            name="Citizen Number #", value=citizen["citizen_record"], inline=False
-        )
+        embed.add_field(name="Citizen Number #", value=citizen["citizen_record"], inline=False)
         embed.add_field(name="RSI URL:", value=profiles_url + handle_e, inline=False)
-        embed.add_field(
-            name="Languages:", value=f"{citizen['languages']}.", inline=False
-        )
+        embed.add_field(name="Languages:", value=f"{citizen['languages']}.", inline=False)
         embed.add_field(name="Location:", value=f"{citizen['location']}.", inline=False)
         embed.add_field(name="Joined CORP:", value=joined, inline=False)
         embed.add_field(name="Joined RSI:", value=citizen["enlisted"], inline=False)
         embed.add_field(name="Assigned HR Rep:", value=hr_rep, inline=False)
         app = await self.bot.get_channel(log_channel).send(content=None, embed=embed)
-        await self.bot.get_channel(log_channel).send(
-            f"{ctx.guild.get_role(recruiter_role).mention}, please say " f"hello!"
-        )
+        await self.bot.get_channel(log_channel).send(f"{ctx.guild.get_role(recruiter_role).mention}, please say hello!")
 
     @commands.command(
         name="checkrsi",
@@ -716,9 +663,7 @@ class Corp(commands.Cog):
                 await ctx.send(f"I see no one in that channel.")
                 return
         except AttributeError:
-            await ctx.send(
-                "It looks like you may have misspelled that channel name. Try again."
-            )
+            await ctx.send("It looks like you may have misspelled that channel name. Try again.")
             return
         members = []
         for member in channel.members:
@@ -728,20 +673,16 @@ class Corp(commands.Cog):
             if link is None:
                 continue
             rsi = link[link.rfind("/") + 1 : len(link)]
-            members.append((rsi, str(member), link))
+            members.append((rsi, str(member).rstrip("#0"), link))
         members = sorted(members)
         message = [""]
         i = 0
         for member in members:
             try:
-                message[
-                    int(i / 10)
-                ] += f"I see {member[1]} in that channel, their link is {member[2]}.\n"
+                message[int(i / 10)] += f"I see {member[1]} in that channel, their link is {member[2]}\n"
             except IndexError:
                 message.append("")
-                message[
-                    int(i / 10)
-                ] += f"I see {member[1]} in that channel, their link is {member[2]}.\n"
+                message[int(i / 10)] += f"I see {member[1]} in that channel, their link is {member[2]}\n"
             i += 1
         for mes in message:
             await ctx.send(mes)
@@ -776,9 +717,7 @@ class Corp(commands.Cog):
                 await ctx.send(f"I see no one in that channel.")
                 return
         except AttributeError:
-            await ctx.send(
-                "It looks like you may have misspelled that channel name. Try again."
-            )
+            await ctx.send("It looks like you may have misspelled that channel name. Try again.")
             return
         divs_in_channel = Counter()
         for member in channel.members:
@@ -808,9 +747,7 @@ class Corp(commands.Cog):
         # If not yet registered, don't allow use of reqdiv
         if not mem_is_in_corp(ctx.author):
             prefix = await self.bot.get_prefix(ctx.message)
-            await ctx.send(
-                f"I'm sorry, you need to get a Corporateer tag first. Use `{prefix}register`."
-            )
+            await ctx.send(f"I'm sorry, you need to get a Corporateer tag first. Use `{prefix}register`.")
             return
         # Find reporting channel
         for channel in ctx.guild.channels:
@@ -862,8 +799,7 @@ class Corp(commands.Cog):
             f"Please contact them at your convenience to help them with that."
         )
         await ctx.send(
-            f"Okay, I have informed the division leader and department head that you're interested "
-            f"in joining {div}."
+            f"Okay, I have informed the division leader and department head that you're interested in joining {div}."
         )
 
     @commands.command(name="adduser", description="Adds a user to the database.")
@@ -884,15 +820,11 @@ class Corp(commands.Cog):
         location = citizen["location"]
         joined_rsi = citizen["enlisted"]
         hr_rep = random.choice(hr_reps(ctx.guild))
-        result = adduser(
-            user, rsi, languages, location, joined_rsi, rsi_number, joined, hr_rep
-        )
+        result = adduser(user, rsi, languages, location, joined_rsi, rsi_number, joined, hr_rep)
         await ctx.send(result)
         print(result)
 
-    @commands.command(
-        name="checkorgs", description="Checks what organizations someone is a part of."
-    )
+    @commands.command(name="checkorgs", description="Checks what organizations someone is a part of.")
     @commands.check(auth(1))
     async def checkorgs(self, ctx, rsi):
         """
@@ -908,14 +840,11 @@ class Corp(commands.Cog):
         languages = ", ".join([language for language in citizen["languages"]])
         orgs = ", ".join([org["name"] for org in citizen["orgs"]])
         to_send = (
-            f"I found some information on that person's RSI profile.\n**Orgs:**\n{orgs}\n"
-            f"**Languages:**\n{languages}"
+            f"I found some information on that person's RSI profile.\n**Orgs:**\n{orgs}\n**Languages:**\n{languages}"
         )
         await ctx.send(to_send)
 
-    @commands.command(
-        name="remove_corp", description="Removes someone's Corporateer tag"
-    )
+    @commands.command(name="remove_corp", description="Removes someone's Corporateer tag")
     @commands.check(auth(1))
     async def remove_corp(self, ctx, user: discord.Member):
         """
@@ -924,9 +853,7 @@ class Corp(commands.Cog):
         try:
             await user.remove_roles(ctx.guild.get_role(corp_tag_id))
             print(f"Removed corp tag from {user} by request from {ctx.author}.")
-            await ctx.send(
-                f"Removed corp tag from {user} by request from {ctx.author}."
-            )
+            await ctx.send(f"Removed corp tag from {user} by request from {ctx.author}.")
         except PermissionError:
             await ctx.send(
                 "Hmm, the bot seems to be configured incorrectly. Make sure I have all required perms "
