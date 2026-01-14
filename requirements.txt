@@ -10,7 +10,7 @@ discord.py==1.7.3
 Django==3.1.14
 django-scheduler==0.9.3
 icalendar==4.0.7
-idna==2.10
+idna==3.7
 lxml==4.9.1
 multidict==5.0.0
 mysql-connector==2.2.9
